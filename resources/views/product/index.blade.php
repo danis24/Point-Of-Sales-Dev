@@ -17,7 +17,7 @@
       </div>
   </div>
   <div class="card-body">
-    <div class="table-responsive">       
+    <div class="table-responsive">
     	<form method="POST" id="form-product">
     		{{csrf_field()}}
     	<table class="table table-striped dataTable">
@@ -44,11 +44,11 @@
             	</tr>
             </tbody>
           </table>
-        
+
     	</form>
     </div>
   </div>
-</div>       
+</div>
 @endsection
 
 @section('script')
@@ -63,7 +63,7 @@
 			"processing" : true,
 			"serverside" : true,
 			"ajax" : {
-				"url"  : "{{route('product.data')}}", 
+				"url"  : "{{route('product.data')}}",
 				"type" : "GET"
 			},
 			"columnDefs" : [{
@@ -130,6 +130,7 @@
 				$('#product_code').val(data.product_code).attr('readonly', true);
 				$('#product_name').val(data.product_name);
 				$('#category').val(data.category_id);
+				$('#unit_id').val(data.unit_id);
 				$('#product_brand').val(data.product_brand);
 				$('#purchase_price').val(data.purchase_price);
 				$('#discount').val(data.discount);
@@ -153,7 +154,7 @@
 				},
 				error	: function(){
 					alert("Tidak dapat menghapus data");
-				} 
+				}
 			});
 		}
 	}

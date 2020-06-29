@@ -5,14 +5,25 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Category;
 use App\Product;
+use App\Unit;
 use DataTables;
 use PDF;
+use App\Stock;
 
 class ProductController extends Controller
 {
+	protected $stock;
+
+	public function __construct()
+	{
+		$this->stock = new Stock;
+		$this->middleware("auth");
+	}
+
     public function index(){
-    	$category = Category::all();
-    	return view('product.index', compact('category'));
+		$category = Category::all();
+		$units = Unit::all();
+    	return view('product.index', compact('category', 'units'));
     }
 
     public function listData(){
@@ -20,6 +31,9 @@ class ProductController extends Controller
     	$no = 0;
     	$data = array();
     	foreach ($product as $list) {
+			$SumStockIn = $this->stock->where("product_id", "=", $list->product_id)->where("type", "=", "in")->sum("stocks");
+			$SumStockOut = $this->stock->where("product_id", "=", $list->product_id)->where("type", "=", "out")->sum("stocks");
+			$stocks = ($list->product_stock+$SumStockIn)-$SumStockOut;
     		$no ++;
             $row = array();
             $row[] = "
@@ -32,7 +46,7 @@ class ProductController extends Controller
             $row[] = "Rp. ".currency_format($list->purchase_price);
             $row[] = "Rp. ".currency_format($list->selling_price);
             $row[] = $list->discount."%";
-            $row[] = $list->product_stock;
+            $row[] = $stocks." ".$list->unit->name;
             $row[] = '
                     <div class="dropdown d-inline">
                       <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -59,6 +73,7 @@ class ProductController extends Controller
     		$product->discount = $request['discount'];
     		$product->selling_price = $request['selling_price'];
     		$product->product_stock = $request['product_stock'];
+    		$product->unit_id = $request['unit_id'];
     		$product->save();
     		echo json_encode(array('msg'=>'success'));
     	}else{
@@ -80,6 +95,7 @@ class ProductController extends Controller
 		$product->discount = $request['discount'];
 		$product->selling_price = $request['selling_price'];
 		$product->product_stock = $request['product_stock'];
+		$product->unit_id = $request['unit_id'];
 		$product->update();
 		echo json_encode(array('msg'=>'success'));
     }

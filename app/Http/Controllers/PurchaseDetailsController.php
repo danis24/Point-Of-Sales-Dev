@@ -9,17 +9,28 @@ use App\Purchase;
 use App\Supplier;
 use App\Product;
 use App\PurchaseDetails;
+use App\SupplierProduct;
+use App\Division;
+use App\Payment;
 
 class PurchaseDetailsController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware("auth");
+    }
+
 	public function index(){
-		$product = Product::all();
-		$purchase_id = session('purchase_id');
+        $purchase_id = session('purchase_id');
 		$supplier = Supplier::find(session('supplier_id'));
-        return view('purchase_details.index', compact('product', 'purchase_id', 'supplier'));
+        $product = SupplierProduct::where("supplier_id", session('supplier_id'))->get();
+        $divisions = Division::all();
+        $payments = Payment::all();
+        return view('purchase_details.index', compact('product', 'purchase_id', 'supplier', 'divisions', 'payments'));
     }
     public function listData($id){
-        $detail = PurchaseDetails::leftJoin('product', 'product.product_code', '=', 'purchase_details.product_code')->where('purchase_id', '=', $id)->get();
+        $detail = PurchaseDetails::leftJoin('supplier_products', 'supplier_products.id', '=', 'purchase_details.product_code')->where('purchase_id', '=', $id)->get();
         $no = 0;
         $data = array();
         $total = 0;
@@ -28,15 +39,14 @@ class PurchaseDetailsController extends Controller
             $no ++;
             $row = array();
             $row[] = $no;
-            $row[] = $list->product_code;
             $row[] = $list->product_name;
-            $row[] = "Rp. ".currency_format($list->purchase_price);
+            $row[] = "Rp. ".currency_format($list->price);
             $row[] = "<input type='number' class='form-control' name='total_$list->purchase_details_id' value='$list->total' onChange='changeCount($list->purchase_details_id)'>";
-            $row[] = "Rp. ".currency_format($list->purchase_price * $list->total);
+            $row[] = "Rp. ".currency_format($list->price * $list->total);
             $row[] = '<a onclick="deleteItem('.$list->purchase_details_id.')" class="btn btn-danger btn-sm"><i class="fas fa-trash text-white"></i></a>';
             $data[] = $row;
 
-            $total += $list->purchase_price * $list->total;
+            $total += $list->price * $list->total;
             $total_item += $list->total;
         }
         $data[] = array("<span class='d-none total'>$total</span><span class='d-none total_item'>$total_item</span>", "", "", "", "", "", "");
@@ -44,13 +54,13 @@ class PurchaseDetailsController extends Controller
         return response()->json($output);
     }
     public function store(Request $request){
-    	$product = Product::where('product_code', '=', $request['product_code'])->first();
+    	$product = SupplierProduct::where('id', '=', $request['product_code'])->first();
         $detail = new PurchaseDetails;
         $detail->purchase_id = $request['purchase_id'];
         $detail->product_code = $request['product_code'];
-        $detail->purchase_price = $product->purchase_price;
+        $detail->purchase_price = $product->price;
         $detail->total = 1;
-        $detail->sub_total = $product->purchase_price;
+        $detail->sub_total = $product->price;
         $detail->save();
     }
     public function update(Request $request, $id){
@@ -73,5 +83,5 @@ class PurchaseDetailsController extends Controller
     	    "spelling" => ucwords(spelling($pay))." Rupiah"
     	);
     	return response()->json($data);
-    }    
+    }
 }

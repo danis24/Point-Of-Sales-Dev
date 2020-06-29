@@ -9,9 +9,15 @@ use App\Purchase;
 use App\Supplier;
 use App\PurchaseDetails;
 use App\Product;
+use App\SupplierProduct;
 
 class PurchaseController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware("auth");
+    }
+
 	public function index(){
 		$supplier = Supplier::all();
         return view('purchase.index', compact('supplier'));
@@ -25,10 +31,16 @@ class PurchaseController extends Controller
             $row = array();
             $row[] = $no;
             $row[] = indo_date(substr($list->created_at, 0, 10), false);
+            $row[] = $list->division->name;
             $row[] = $list->supplier_name;
             $row[] = $list->total_item;
             $row[] = "Rp. ".currency_format($list->total_price);
             $row[] = $list->discount."%";
+            if($list->payment->type == "cash"){
+                $row[] = "CASH";
+            }else{
+                $row[] = $list->payment->bank_name." - ".$list->payment->account_number." - ".$list->payment->account_name;
+            }
             $row[] = "Rp. ".currency_format($list->pay);
             $row[] = '<div class="dropdown d-inline">
                       <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -44,18 +56,17 @@ class PurchaseController extends Controller
         return response()->json($output);
     }
     public function show($id){
-        $detail = PurchaseDetails::leftJoin('product', 'product.product_code', '=', 'purchase_details.product_code')->where('purchase_id', '=', $id)->get();
+        $detail = PurchaseDetails::leftJoin('supplier_products', 'supplier_products.id', '=', 'purchase_details.product_code')->where('purchase_id', '=', $id)->get();
         $no = 0;
         $data = array();
         foreach ($detail as $list) {
             $no ++;
             $row = array();
             $row[] = $no;
-            $row[] = $list->product_code;
             $row[] = $list->product_name;
-            $row[] = "Rp. ".currency_format($list->purchase_price);
+            $row[] = "Rp. ".currency_format($list->price);
             $row[] = $list->total;
-            $row[] = "Rp. ".currency_format($list->purchase_price * $list->total);
+            $row[] = "Rp. ".currency_format($list->price * $list->total);
             $data[] = $row;
         }
         $output = array("data" => $data);
@@ -81,12 +92,13 @@ class PurchaseController extends Controller
         $purchase->total_price = $request['total'];
         $purchase->discount = $request['discount'];
         $purchase->pay = $request['pay'];
+        $purchase->division_id = $request['division_id'];
+        $purchase->payment_id = $request['payment_id'];
         $purchase->update();
 
         $detail = PurchaseDetails::where('purchase_id', '=', $request['purchase_id'])->get();
         foreach ($detail as $data) {
-        	$product = Product::where('product_code', '=', $data->product_code)->first();
-        	$product->product_stock += $data->total;
+        	$product = SupplierProduct::where('id', '=', $data->product_code)->first();
         	$product->update();
         }
         return Redirect::route('purchase.index');
@@ -97,10 +109,9 @@ class PurchaseController extends Controller
 
         $detail = PurchaseDetails::where('purchase_id', '=', $id)->get();
         foreach ($detail as $data) {
-        	$product = Product::where('product_code', '=', $data->product_code)->first();
-        	$product->stock -= $data->total;
+        	$product = SupplierProduct::where('id', '=', $data->product_code)->first();
         	$product->update();
         	$data->delete();
         }
-    }    
+    }
 }

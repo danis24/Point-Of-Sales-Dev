@@ -8,7 +8,7 @@ Transaksi Pembelian
 <!-- Body Copy -->
 <div class="card">
   <div class="card-body">
-    <div class="table-responsive">       
+    <div class="table-responsive">
       <table class="table table-bordered table-striped">
         <tr>
             <th width="150">Supplier</th>
@@ -39,12 +39,11 @@ Transaksi Pembelian
         </form>
         <form class="form-shopping-cart">
             {{csrf_field()}} {{method_field('PATCH')}}
-            <div class="table-responsive"> 
+            <div class="table-responsive">
             <table class="table table-stripped table-purchase">
                 <thead>
                     <tr>
                         <th width="30">No</th>
-                        <th>Kode Produk</th>
                         <th>Nama Produk</th>
                         <th>Harga</th>
                         <th>Jumlah</th>
@@ -89,6 +88,36 @@ Transaksi Pembelian
                         <input type="text" class="form-control" id="pay_rp" readonly>
                     </div>
                 </div>
+                <div class="form-group form-float">
+                    <div class="form-line">
+                        <div class="section-title">Divisi</div>
+                        <select name="division_id" id="division_id" class="form-control">
+                            @if($divisions->count() > 0)
+                            @foreach($divisions as $key => $value)
+                            <option value="{{ $value->id }}">{{ $value->name }}</option>
+                            @endforeach
+                            @endif
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group form-float">
+                    <div class="form-line">
+                        <div class="section-title">Jenis Pembayaran</div>
+                        <select name="payment_id" id="payment_id" class="form-control">
+                            @if($payments->count() > 0)
+                            @foreach($payments as $key => $value)
+                            <option value="{{ $value->id }}">
+                                @if($value->bank_name == "")
+                                CASH
+                                @else
+                                {{$value->bank_name}} - {{$value->account_number}} - {{$value->account_name}}
+                                @endif
+                            </option>
+                            @endforeach
+                            @endif
+                        </select>
+                    </div>
+                </div>
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-outline-primary save">SIMPAN TRANSAKSI</button>
                 </div>
@@ -96,7 +125,7 @@ Transaksi Pembelian
         </div>
         </div>
     </div>
-</div>      
+</div>
 @endsection
 
 @section('script')
@@ -190,7 +219,7 @@ function deleteItem(id){
             },
             error   : function(){
                 alert("Tidak dapat menghapus data");
-            } 
+            }
         });
     }
 }

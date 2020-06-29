@@ -20,7 +20,7 @@
     <div class="table-responsive">
     	<form method="POST" id="form-member">
     		{{csrf_field()}}
-        <table class="table table-striped table-hover js-basic-example dataTable">
+        <table class="table table-striped table-hover js-basic-example dataTable table-member">
             <thead>
                 <tr>
                 	<th width="20">
@@ -41,15 +41,16 @@
         </form>
     </div>
   </div>
-</div>       
+</div>
 @endsection
 
 @section('script')
 @include('member.form')
+@include('member.preorderdetail')
 <script type="text/javascript">
-	var table, save_method;
+	var table, save_method, table1;
 	$(function(){
-		table = $('.table').DataTable({
+		table = $('.table-member').DataTable({
 			"language": {
             	"url" : "{{asset('tables_indo.json')}}",
          	},
@@ -65,6 +66,20 @@
 				'orderable' : false
 			}],
 			"order":[1, 'asc']
+		});
+
+		table1 = $('.table-detail').DataTable({
+			"bSort"	: false,
+			"processing" : true,
+			"language": {
+            	"url" : "{{asset('tables_indo.json')}}",
+         	},
+			"serverside" : true,
+			"columnDefs" : [{
+				'targets' : 0,
+				'searchable': false,
+				'orderable' : false
+			}],
 		});
 
 		$('#ig_checkbox').click(function(){
@@ -99,6 +114,13 @@
 			}
 		});
 	});
+
+	function showDetail(id){
+		$('#modal-detail').modal('show');
+		table1.ajax.url("preorders/"+id+"/show");
+		table1.ajax.reload();
+	}
+
 	function addForm(){
 		save_method = "add";
 		$('input[name=_method]').val('POST');
@@ -107,6 +129,7 @@
 		$('.modal-title').text('Tambah Member');
 		$('#member_code').attr('readonly', false);
 	}
+
 	function editForm(id){
 		save_method = "edit";
 		$('input[name=_method]').val('PATCH');
@@ -142,7 +165,7 @@
 				},
 				error	: function(){
 					alert("Tidak dapat menghapus data");
-				} 
+				}
 			});
 		}
 	}

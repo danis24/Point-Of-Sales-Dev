@@ -7,9 +7,15 @@ use Illuminate\Http\Request;
 
 class MemberController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware("auth");
+    }
+
     public function index(){
         return view('member.index');
     }
+
     public function listData(){
         $member = Member::orderBy('member_id', 'asc')->get();
         $no = 0;
@@ -17,7 +23,7 @@ class MemberController extends Controller
         foreach ($member as $list) {
             $no ++;
             $row = array();
-            $row[] = "<input type='checkbox' name='id[]'' id='ig_checkbox' value='".$list->member_id."'><label for='ig_checkbox'></label>"; 
+            $row[] = "<input type='checkbox' name='id[]'' id='ig_checkbox' value='".$list->member_id."'><label for='ig_checkbox'></label>";
             $row[] = $no;
             $row[] = $list->member_code;
             $row[] = $list->member_name;
@@ -29,6 +35,7 @@ class MemberController extends Controller
                         Aksi
                       </button>
                       <div class="dropdown-menu">
+                        <a onclick="showDetail('.$list->member_id.')" class="dropdown-item has-icon"><i class="fas fa-boxes"></i>Detail PO</a>
                         <a onclick="editForm('.$list->member_id.')" class="dropdown-item has-icon"><i class="fas fa-edit"></i>Edit Data</a>
                         <a onclick="deleteData('.$list->member_id.')" class="dropdown-item has-icon"><i class="fas fa-trash"></i>Hapus Data</a>
                       </div></tr>';
@@ -37,6 +44,7 @@ class MemberController extends Controller
         $output = array("data" => $data);
         return response()->json($output);
     }
+
     public function store(Request $request){
         $total = Member::where('member_code', '=', $request['member_code'])->count();
         if ($total < 1) {
@@ -44,17 +52,19 @@ class MemberController extends Controller
         	$member->member_code = $request['member_code'];
 	        $member->member_name = $request['member_name'];
 			$member->member_address = $request['member_address'];
-			$member->member_phone_number = $request['member_phone_number'];        
+			$member->member_phone_number = $request['member_phone_number'];
 	        $member->save();
 	        echo json_encode(array('msg'=>'success'));
         }else{
         	echo json_encode(array('msg'=>'error'));
         }
     }
+
     public function edit($id){
         $member = Member::find($id);
         echo json_encode($member);
     }
+
     public function update(Request $request, $id){
         $member = Member::find($id);
         $member->member_name = $request['member_name'];
@@ -63,10 +73,12 @@ class MemberController extends Controller
         $member->update();
         echo json_encode(array('msg'=>'success'));
     }
+
     public function destroy($id){
         $member = Member::find($id);
         $member->delete();
     }
+
     public function printCard(Request $request){
     	$data_member = array();
     	if (is_array($request['id']) || is_object($request['id']))

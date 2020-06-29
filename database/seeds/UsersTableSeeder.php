@@ -13,16 +13,16 @@ class UsersTableSeeder extends Seeder
     {
         DB::table('users')->insert(array(
         	[
-        		'name'		=>	'Lendis Fabri',
-        		'email'		=>	'lendisfabri27@gmail.com',
-        		'password'	=>	bcrypt('lendis123'),
+        		'name'		=>	'Danis Yogaswara',
+        		'email'		=>	'danistutorial@gmail.com',
+        		'password'	=>	bcrypt('Suckhack24@'),
         		'photos'	=>	'lendis.jpg',
         		'level'		=>	1
         	],
         	[
-        		'name'		=>	'Divia Nugrahtino',
-        		'email'		=>	'lendisdiary@gmail.com',
-        		'password'	=>	bcrypt('qwertyuiop'),
+        		'name'		=>	'Nenden Dea Febriyanti',
+        		'email'		=>	'dea@erso-pridatama.com',
+        		'password'	=>	bcrypt('zabuza71'),
         		'photos'	=>	'avatar.png',
         		'level'		=>	2
         	]

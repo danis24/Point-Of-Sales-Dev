@@ -7,14 +7,26 @@ use App\Selling;
 use App\Product;
 use App\Member;
 use App\SellingDetails;
+use App\Division;
+use App\Payment;
 
 class SellingController extends Controller
 {
+    protected $division;
+    protected $payment;
+
+    public function __construct()
+    {
+        $this->middleware("auth");
+        $this->division = new Division;
+        $this->payment = new Payment;
+    }
+
     public function index(){
         return view('selling.index');
     }
     public function listData(){
-        $selling = Selling::leftJoin('users', 'users.id', '=', 'selling.users_id')->select('users.*', 'selling.*', 'selling.created_at as date')->orderBy('selling.selling_id', 'desc')->get();
+        $selling = Selling::join('users', 'users.id', '=', 'selling.users_id')->join('divisions', 'divisions.id', '=', 'selling.division_id')->join('payments', 'payments.id', '=', 'selling.payment_id')->select('users.*', 'selling.*', 'divisions.name as division_name', 'payments.type as payment_type', 'payments.bank_name as payment_bank_name', 'payments.account_number as payment_account_number', 'payments.account_name as payment_account_name', 'selling.created_at as date')->orderBy('selling.selling_id', 'desc')->get();
         $no = 0;
         $data = array();
         foreach ($selling as $list) {
@@ -22,11 +34,21 @@ class SellingController extends Controller
             $row = array();
             $row[] = $no;
             $row[] = indo_date(substr($list->date, 0, 10), false);
-            $row[] = $list->member_code;
+            $row[] = $list->division_name;
+            if($list->member_code == 0){
+                $row[] = "UMUM";
+            }else{
+                $row[] = $list->member_code;
+            }
             $row[] = $list->total_item;
             $row[] = "Rp. ".currency_format($list->total_price);
             $row[] = $list->discount."%";
             $row[] = "Rp. ".currency_format($list->pay);
+            if($list->payment_type == "cash"){
+                $row[] = "CASH";
+            }else{
+                $row[] = $list->payment_bank_name." - ".$list->payment_account_number." - ".$list->payment_account_name;
+            }
             $row[] = $list->name;
             $row[] = '<tr>
                      <div class="dropdown d-inline">

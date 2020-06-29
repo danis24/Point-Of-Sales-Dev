@@ -23,6 +23,31 @@ Route::group(['middleware' => ['web', 'usercheck:1']], function(){
 	Route::get('category/data', 'CategoryController@listData')->name('category.data');
 	Route::resource('category', 'CategoryController');
 
+	Route::get('divisions/data', 'DivisionController@listData')->name('divisions.data');
+	Route::resource('divisions', 'DivisionController');
+
+	Route::get('units/data', 'UnitController@listData')->name('units.data');
+	Route::resource('units', 'UnitController');
+
+	Route::get('payments/data', 'PaymentController@listData')->name('payments.data');
+	Route::resource('payments', 'PaymentController');
+
+
+	Route::get('stockin/data', 'StockController@listDataStockIn')->name('stockin.data');
+	Route::get('stockin', 'StockController@indexStockIn')->name('stockin.index');
+	Route::post('stockin', 'StockController@store')->name('stockin.store');
+	Route::get('stockin/{id}/edit', 'StockController@edit')->name('stockin.edit');
+	Route::patch('stockin/{id}', 'StockController@update')->name('stockin.update');
+	Route::delete('stockin/{id}', 'StockController@destroy')->name('stockin.destroy');
+
+	Route::get('stockout/data', 'StockController@listDataStockOut')->name('stockout.data');
+	Route::get('stockout', 'StockController@indexStockOut')->name('stockout.index');
+	Route::post('stockout', 'StockController@store')->name('stockout.store');
+	Route::get('stockout/{id}/edit', 'StockController@edit')->name('stockout.edit');
+	Route::patch('stockout/{id}', 'StockController@update')->name('stockout.update');
+	Route::delete('stockout/{id}', 'StockController@destroy')->name('stockout.destroy');
+
+
 	Route::get('product/data', 'ProductController@listData')->name('product.data');
 	Route::post('product/delete', 'ProductController@deleteSelected');
 	Route::post('product/print', 'ProductController@printBarcode');
@@ -30,6 +55,22 @@ Route::group(['middleware' => ['web', 'usercheck:1']], function(){
 
 	Route::get('supplier/data', 'SupplierController@listData')->name('supplier.data');
 	Route::resource('supplier', 'SupplierController');
+
+	Route::get('preorders/data', 'PreOrderController@listData')->name('preorders.data');
+	Route::resource('preorders', 'PreOrderController');
+	Route::get('preorders/{id}/show', 'PreOrderController@show')->name('preorders.show');
+
+	Route::resource('repayments', 'RepaymentController')->except([
+		"index"
+	]);
+	Route::get('repayments/{id}/show', 'RepaymentController@show')->name('repayments.show');
+
+	Route::get('supplier_products/data/{id}', 'SupplierProductController@listData')->name('supplier_product.data');
+	Route::get('supplier_products/{id}', 'SupplierProductController@index')->name('supplier_product.index');
+	Route::post('supplier_products', 'SupplierProductController@store')->name('supplier_product.store');
+	Route::get('supplier_products/{id}/edit', 'SupplierProductController@edit')->name('supplier_product.edit');
+	Route::patch('supplier_products/{id}', 'SupplierProductController@update')->name('supplier_product.update');
+	Route::delete('supplier_products/{id}', 'SupplierProductController@destroy')->name('supplier_product.destroy');
 
 	Route::get('member/data', 'MemberController@listData')->name('member.data');
 	Route::post('member/print', 'MemberController@printCard');
@@ -55,10 +96,21 @@ Route::group(['middleware' => ['web', 'usercheck:1']], function(){
 	Route::resource('selling', 'SellingController');
 
 	Route::get('report', 'ReportController@index')->name('report.index');
-   Route::post('report', 'ReportController@refresh')->name('report.refresh');
-   Route::get('report/data/{begin}/{end}', 'ReportController@listData')->name('report.data'); 
-   Route::get('report/pdf/{begin}/{end}', 'ReportController@exportPDF');
-   Route::resource('setting', 'SettingController');
+	Route::post('report', 'ReportController@refresh')->name('report.refresh');
+	Route::get('report/data/{begin}/{end}', 'ReportController@listData')->name('report.data');
+	Route::get('report/pdf/{begin}/{end}', 'ReportController@exportPDF');
+	Route::get('accounting-report', 'ReportController@reportAccounting')->name('accountingreports.index');
+	Route::get('accounting-report/data/{begin}/{end}/{division}/{payment}', 'ReportController@reportAccountingList')->name('accountingreports.data');
+
+	Route::resource('setting', 'SettingController');
+
+	Route::get('transaction/new', 'SellingDetailsController@newSession')->name('transaction.new');
+	Route::get('transaction/{id}/data', 'SellingDetailsController@listData')->name('transaction.data');
+	Route::get('transaction/printnote', 'SellingDetailsController@printNote')->name('transaction.print');
+	Route::get('transaction/notepdf', 'SellingDetailsController@notePDF')->name('transaction.pdf');
+	Route::post('transaction/save', 'SellingDetailsController@saveData');
+	Route::get('transaction/loadform/{discount}/{total}/{received}', 'SellingDetailsController@loadForm');
+	Route::resource('transaction', 'SellingDetailsController');
 
 });
 
@@ -67,10 +119,10 @@ Route::group(['middleware' => 'web'], function(){
 	Route::patch('user/{id}/change', 'UserController@changeProfile');
 
 	Route::get('transaction/new', 'SellingDetailsController@newSession')->name('transaction.new');
-   Route::get('transaction/{id}/data', 'SellingDetailsController@listData')->name('transaction.data');
-   Route::get('transaction/printnote', 'SellingDetailsController@printNote')->name('transaction.print');
-   Route::get('transaction/notepdf', 'SellingDetailsController@notePDF')->name('transaction.pdf');
-   Route::post('transaction/save', 'SellingDetailsController@saveData');
-   Route::get('transaction/loadform/{discount}/{total}/{received}', 'SellingDetailsController@loadForm');
-   Route::resource('transaction', 'SellingDetailsController');
+	Route::get('transaction/{id}/data', 'SellingDetailsController@listData')->name('transaction.data');
+	Route::get('transaction/printnote', 'SellingDetailsController@printNote')->name('transaction.print');
+	Route::get('transaction/notepdf', 'SellingDetailsController@notePDF')->name('transaction.pdf');
+	Route::post('transaction/save', 'SellingDetailsController@saveData');
+	Route::get('transaction/loadform/{discount}/{total}/{received}', 'SellingDetailsController@loadForm');
+	Route::resource('transaction', 'SellingDetailsController');
 });

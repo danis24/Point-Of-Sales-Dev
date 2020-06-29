@@ -6,9 +6,15 @@ use App\Setting;
 
 class SettingController extends Controller
 {
+
+   public function __construct()
+   {
+      $this->middleware("auth");
+   }
+
    public function index()
    {
-      return view('setting.index'); 
+      return view('setting.index');
    }
 
    public function edit($id)
@@ -25,14 +31,14 @@ class SettingController extends Controller
       $setting->company_phone_number = $request['company_phone_number'];
       $setting->member_discount = $request['member_discount'];
       $setting->note_type = $request['note_type'];
-      
+
       if ($request->hasFile('company_logo')) {
          $file = $request->file('company_logo');
          $image_name = "company_logo.".$file->getClientOriginalExtension();
          $location = public_path('images');
 
          $file->move($location, $image_name);
-         $setting->company_logo = $image_name;  
+         $setting->company_logo = $image_name;
       }
 
       if ($request->hasFile('member_card')) {
@@ -41,7 +47,7 @@ class SettingController extends Controller
          $location = public_path('images');
 
          $file->move($location, $image_name);
-         $setting->member_card = $image_name;  
+         $setting->member_card = $image_name;
       }
       $setting->update();
    }

@@ -25,10 +25,12 @@
                 <tr>
                     <th>No</th>
                     <th>Tanggal</th>
+                    <th>Divisi</th>
                     <th>Supplier</th>
                     <th>Total Item</th>
                     <th>Total Harga</th>
                     <th>Diskon</th>
+                    <th>Jenis Pembayaran</th>
                     <th>Total Bayar</th>
                     <th>Kelola Data</th>
                 </tr>
@@ -37,7 +39,7 @@
         </table>
     </div>
   </div>
-</div>       
+</div>
 @endsection
 
 @section('script')
@@ -87,10 +89,9 @@
 				},
 				error	: function(){
 					alert("Tidak dapat menghapus data");
-				} 
+				}
 			});
 		}
 	}
 </script>
-
 @endsection

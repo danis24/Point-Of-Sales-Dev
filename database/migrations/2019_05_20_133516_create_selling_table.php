@@ -22,7 +22,11 @@ class CreateSellingTable extends Migration
             $table->bigInteger('pay')->unsigned();
             $table->bigInteger('received')->unsigned();
             $table->integer('users_id')->unsigned();
+            $table->unsignedBigInteger('division_id')->nullable();
+            $table->unsignedBigInteger('payment_id')->nullable();
             $table->timestamps();
+            $table->foreign('division_id')->references('id')->on('divisions')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreign('payment_id')->references('id')->on('payments')->onUpdate('cascade')->onDelete('cascade');
         });
     }
 

@@ -4,12 +4,28 @@ namespace App\Http\Controllers;
 use App\Spending;
 use Illuminate\Http\Request;
 use DataTables;
+use App\Division;
+use App\Payment;
 
 class SpendingController extends Controller
 {
-    public function index(){
-        return view('spending.index');
+
+    protected $division;
+    protected $payment;
+
+    public function __construct()
+    {
+        $this->middleware("auth");
+        $this->division = new Division;
+        $this->payment = new Payment;
     }
+
+    public function index(){
+        $divisions = $this->division->get();
+        $payments = $this->payment->get();
+        return view('spending.index', compact('divisions', 'payments'));
+    }
+
     public function listData(){
         $spending = Spending::orderBy('spending_id', 'asc')->get();
         $no = 0;
@@ -19,8 +35,14 @@ class SpendingController extends Controller
             $row = array();
             $row[] = $no;
             $row[] = indo_date(substr($list->created_at, 0, 10), false);
+            $row[] = $list->division->name;
             $row[] = $list->spending_type;
             $row[] = "Rp. " . currency_format($list->nominal);
+            if($list->payment->type == "cash"){
+                $row[] = "CASH";
+            }else{
+                $row[] = $list->payment->bank_name." - ".$list->payment->account_number." - ".$list->payment->account_name;
+            }
             $row[] = '<tr>
                      <div class="dropdown d-inline">
                       <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -38,6 +60,8 @@ class SpendingController extends Controller
         $spending = new Spending;
         $spending->spending_type = $request['spending_type'];
         $spending->nominal = $request['nominal'];
+        $spending->division_id = $request['division_id'];
+        $spending->payment_id = $request['payment_id'];
         $spending->save();
     }
     public function edit($id){
@@ -48,6 +72,8 @@ class SpendingController extends Controller
         $spending = Spending::find($id);
         $spending->spending_type = $request['spending_type'];
         $spending->nominal = $request['nominal'];
+        $spending->division_id = $request['division_id'];
+        $spending->payment_id = $request['payment_id'];
         $spending->update();
     }
     public function destroy($id){

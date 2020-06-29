@@ -21,8 +21,10 @@
                 <tr>
                     <th width="20">No</th>
                     <th>Tanggal</th>
+                    <th>Divisi</th>
                     <th>Jenis Pengeluaran</th>
                     <th>Nominal</th>
+                    <th>Jenis Pembayaran</th>
                     <th>Kelola Data</th>
                 </tr>
             </thead>
@@ -31,7 +33,7 @@
         </table>
     </div>
   </div>
-</div>       
+</div>
 @endsection
 
 @section('script')
@@ -93,6 +95,8 @@
 				$('#id').val(data.spending_id);
 				$('#spending_type').val(data.spending_type);
 				$('#nominal').val(data.nominal);
+				$('#division_id').val(data.division_id);
+				$('#payment_id').val(data.payment_id);
 			},
 			error		: function(){
 				alert("Tidak dapat menampilkan data!");
@@ -111,7 +115,7 @@
 				},
 				error	: function(){
 					alert("Tidak dapat menghapus data");
-				} 
+				}
 			});
 		}
 	}

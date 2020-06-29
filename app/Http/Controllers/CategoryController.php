@@ -6,9 +6,16 @@ use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware("auth");
+    }
+
     public function index(){
         return view('category.index');
     }
+
     public function listData(){
         $category = Category::orderBy('category_id', 'asc')->get();
         $no = 0;
@@ -33,20 +40,24 @@ class CategoryController extends Controller
         $output = array("data" => $data);
         return response()->json($output);
     }
+
     public function store(Request $request){
         $category = new Category;
         $category->category_name = $request['category_name'];
         $category->save();
     }
+
     public function edit($id){
         $category = Category::find($id);
         echo json_encode($category);
     }
+
     public function update(Request $request, $id){
         $category = Category::find($id);
         $category->category_name = $request['category_name'];
         $category->update();
     }
+
     public function destroy($id){
         $category = Category::find($id);
         $category->delete();

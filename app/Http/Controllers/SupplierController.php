@@ -28,6 +28,7 @@ class SupplierController extends Controller
                       <div class="dropdown-menu">
                         <a onclick="editForm('.$list->supplier_id.')" class="dropdown-item has-icon"><i class="fas fa-edit"></i>Edit Data</a>
                         <a onclick="deleteData('.$list->supplier_id.')" class="dropdown-item has-icon"><i class="fas fa-trash"></i>Hapus Data</a>
+                        <a href="/supplier_products/'.$list->supplier_id.'" class="dropdown-item has-icon"><i class="fas fa-boxes"></i>Produk</a>
                       </div></tr>';
             $data[] = $row;
         }
@@ -38,7 +39,7 @@ class SupplierController extends Controller
         $supplier = new Supplier;
         $supplier->supplier_name = $request['supplier_name'];
 		$supplier->supplier_address = $request['supplier_address'];
-		$supplier->supplier_phone_number = $request['supplier_phone_number'];        
+		$supplier->supplier_phone_number = $request['supplier_phone_number'];
         $supplier->save();
     }
     public function edit($id){

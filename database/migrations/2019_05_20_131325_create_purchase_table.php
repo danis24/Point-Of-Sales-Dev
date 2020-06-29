@@ -20,7 +20,11 @@ class CreatePurchaseTable extends Migration
             $table->bigInteger('total_price')->unsigned();
             $table->integer('discount')->unsigned();
             $table->bigInteger('pay')->unsigned();
+            $table->unsignedBigInteger('division_id')->nullable();
+            $table->unsignedBigInteger('payment_id')->nullable();
             $table->timestamps();
+            $table->foreign('division_id')->references('id')->on('divisions')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreign('payment_id')->references('id')->on('payments')->onUpdate('cascade')->onDelete('cascade');
         });
     }
 

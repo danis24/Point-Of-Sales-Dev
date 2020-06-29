@@ -13,26 +13,36 @@ use App\Setting;
 use App\SellingDetails;
 use Mike42\Escpos\PrintConnectors\FilePrintConnector;
 use Mike42\Escpos\Printer;
+use App\Division;
+use App\Payment;
 
 class SellingDetailsController extends Controller
 {
+
+  public function __construct()
+  {
+    $this->middleware("auth");
+  }
+
    public function index(){
       $product = Product::all();
       $member = Member::all();
       $setting = Setting::first();
+      $divisions = Division::all();
+      $payments = Payment::all();
 
      if(!empty(session('selling_id'))){
        $selling_id = session('selling_id');
-       return view('selling_details.index', compact('product', 'member', 'setting', 'selling_id'));
+       return view('selling_details.index', compact('product', 'member', 'setting', 'selling_id', 'divisions', 'payments'));
      }else{
-       return Redirect::route('home');  
+       return Redirect::route('home');
      }
    }
 
    public function listData($id)
    {
-   
-     $detail = SellingDetails::leftJoin('product', 'product.product_code', '=', 'selling_details.product_code')->where('selling_id', '=', $id)->get();
+
+     $detail = SellingDetails::leftJoin('product', 'product.product_code', '=', 'selling_details.product_code')->where('selling_id', '=', $id)->select('product.product_code', 'product.product_name', 'selling_details.selling_price', 'selling_details.selling_details_id', 'selling_details.total', 'selling_details.sub_total', 'selling_details.discount as discount')->get();
      $no = 0;
      $data = array();
      $total = 0;
@@ -45,18 +55,17 @@ class SellingDetailsController extends Controller
        $row[] = $list->product_name;
        $row[] = "Rp. ".currency_format($list->selling_price);
        $row[] = "<input type='number' class='form-control' name='total_$list->selling_details_id' value='$list->total' onChange='changeCount($list->selling_details_id)'>";
-       $row[] = $list->discount."%";
+       $row[] = "<input type='number' class='form-control' name='discount_$list->selling_details_id' value='$list->discount' onChange='changeCount($list->selling_details_id)'>";
        $row[] = "Rp. ".currency_format($list->sub_total);
        $row[] = '<div class="btn-group">
                <a onclick="deleteItem('.$list->selling_details_id.')" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i></a>';
        $data[] = $row;
 
-       $total += $list->selling_price * $list->total;
+       $total += $list->sub_total;
        $total_item += $list->total;
      }
-
      $data[] = array("<span class='d-none total'>$total</span><span class='d-none total_item'>$total_item</span>", "", "", "", "", "", "", "");
-    
+
      $output = array("data" => $data);
      return response()->json($output);
    }
@@ -78,11 +87,13 @@ class SellingDetailsController extends Controller
    public function update(Request $request, $id)
    {
       $input_name = "total_".$id;
+      $discount = "discount_".$id;
       $detail = SellingDetails::find($id);
       $total_price = $request[$input_name] * $detail->selling_price;
 
       $detail->total = $request[$input_name];
-      $detail->sub_total = $total_price - ($detail->discount/100 * $total_price);
+      $detail->discount = $request[$discount];
+      $detail->sub_total = $total_price - ($request[$discount]/100 * $total_price);
       $detail->update();
    }
 
@@ -94,19 +105,19 @@ class SellingDetailsController extends Controller
 
    public function newSession()
    {
-      $selling = new Selling; 
-      $selling->member_code = 0;    
-      $selling->total_item = 0;    
-      $selling->total_price = 0;    
-      $selling->discount = 0;    
-      $selling->pay = 0;    
-      $selling->received = 0;    
-      $selling->users_id = Auth::user()->id;    
+      $selling = new Selling;
+      $selling->member_code = 0;
+      $selling->total_item = 0;
+      $selling->total_price = 0;
+      $selling->discount = 0;
+      $selling->pay = 0;
+      $selling->received = 0;
+      $selling->users_id = Auth::user()->id;
       $selling->save();
-      
+
       session(['selling_id' => $selling->selling_id]);
 
-      return Redirect::route('transaction.index');    
+      return Redirect::route('transaction.index');
    }
 
    public function saveData(Request $request)
@@ -118,6 +129,11 @@ class SellingDetailsController extends Controller
       $selling->discount = $request['discount'];
       $selling->pay = $request['pay'];
       $selling->received = $request['received'];
+      $selling->division_id = $request['division_id'];
+      $selling->payment_id = $request['payment_id'];
+      if(\Auth::user()->level = 1){
+        $selling->created_at = $request['date'];
+      }
       $selling->update();
 
       $detail = SellingDetails::where('selling_id', '=', $request['selling_id'])->get();
@@ -126,9 +142,12 @@ class SellingDetailsController extends Controller
         $product->product_stock -= $data->total;
         $product->update();
       }
+      if(\Auth::user()->level = 1){
+        return Redirect::route('selling.index');
+      }
       return Redirect::route('transaction.print');
    }
-   
+
    public function loadForm($discount, $total, $received){
      $pay = $total - ($discount / 100 * $total);
      $remaining = ($received != 0) ? $received - $pay : 0;
@@ -152,7 +171,7 @@ class SellingDetailsController extends Controller
 
       $selling = Selling::find(session('selling_id'));
       $setting = Setting::find(1);
-      
+
       if($setting->note_type == 0){
         $connector = new FilePrintConnector("php://stdout");
         $printer = new Printer($connector);
@@ -164,7 +183,7 @@ class SellingDetailsController extends Controller
 
         $printer->setJustification($center);
         $printer->text($setting->company_address . "\n");
-        $printer->setJustification($left);        
+        $printer->setJustification($left);
         $printer->text(date('Y-m-d'));
         $printer->setJustification($right);
         $printer->text(substr(Auth::user()->name . "\n", -15));
@@ -172,17 +191,17 @@ class SellingDetailsController extends Controller
         $printer->text("No : ".substr("00000000".$selling->selling_id . "\n", -8));
         $printer->setJustification($center);
         $printer->text("============================ \n");
-        
+
         foreach($detail as $list){
           $printer->setJustification($left);
           $printer->text($list->product_code);
           $printer->setJustification($right);
-          $printer->text($list->product_name. "\n"); 
+          $printer->text($list->product_name. "\n");
           $printer->setJustification($left);
           $printer->text($list->total." x ".currency_format($list->selling_price));
           $printer-> setJustification($right);
-          $printer-> text(substr("                ".currency_format($list->selling_price*$list->total) . "\n", -10));           
-        
+          $printer-> text(substr("                ".currency_format($list->selling_price*$list->total) . "\n", -10));
+
           if($list->discount != 0){
               $printer->setJustification($left);
               $printer->text("Diskon", 0);
@@ -224,17 +243,17 @@ class SellingDetailsController extends Controller
         $printer->text("Kembali: ", 0);
         $printer->setJustification($right);
         $printer->text(substr("            ".currency_format($selling->received-$selling->pay) . "\n", -10));
-        
+
         $printer->setJustification($center);
         $printer->text("============================ \n", 0);
         $printer->setJustification($center);
         $printer->text("-= TERIMA KASIH =-", 250);
-        
+
         $printer->setJustification();
         $printer->cut();
         $printer->close();
       }
-       
+
       return view('selling_details.success', compact('setting'));
    }
 
@@ -244,9 +263,9 @@ class SellingDetailsController extends Controller
       $selling = Selling::find(session('selling_id'));
       $setting = Setting::find(1);
       $no = 0;
-     
+
      $pdf = PDF::loadView('selling_details.notepdf', compact('detail', 'selling', 'setting', 'no'));
-     $pdf->setPaper(array(0,0,550,440), 'potrait');      
+     $pdf->setPaper(array(0,0,550,440), 'potrait');
       return $pdf->stream();
    }
 }

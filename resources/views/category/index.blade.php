@@ -19,16 +19,16 @@
         <table class="table table-striped">
         	<thead>
          <tr>
-                <th>No</th>
+                <th width="5%">No</th>
                 <th>Nama Kategori</th>
-                <th>Kelola Data</th>
+                <th width="15%">Kelola Data</th>
          </tr>
          </thead>
          <tbody></tbody>
         </table>
     </div>
   </div>
-</div>       
+</div>
 @endsection
 
 @section('script')
@@ -108,7 +108,7 @@
 				},
 				error	: function(){
 					alert("Tidak dapat menghapus data");
-				} 
+				}
 			});
 		}
 	}

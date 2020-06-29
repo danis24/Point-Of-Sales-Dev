@@ -2,23 +2,25 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <form id="form_validation" method="POST" data-toggle="validator">
-					{{csrf_field()}} {{method_field('POST')}}
-            <div class="modal-header">
-                <h4 class="modal-title" id="defaultModalLabel"></h4>
-            </div>
-				
+                {{csrf_field()}} {{method_field('POST')}}
+                <div class="modal-header">
+                    <h4 class="modal-title" id="defaultModalLabel"></h4>
+                </div>
+
                 <div class="modal-body">
-                <input type="hidden" id="id" name="id">
+                    <input type="hidden" id="id" name="id">
                     <div class="form-group form-float">
                         <label class="form-label">Kode Produk</label>
                         <div class="form-line">
-                            <input type="number" class="form-control" id="product_code" name="product_code" autofocus required>
+                            <input type="number" class="form-control" id="product_code" name="product_code" autofocus
+                                required>
                         </div>
                     </div>
                     <div class="form-group form-float">
                         <div class="form-line">
                             <label class="form-label">Nama Produk</label>
-                            <input type="text" class="form-control" id="product_name" name="product_name" autofocus required>
+                            <input type="text" class="form-control" id="product_name" name="product_name" autofocus
+                                required>
                         </div>
                     </div>
                     <div class="form-group form-float">
@@ -34,13 +36,15 @@
                     <div class="form-group form-float">
                         <div class="form-line">
                             <label class="form-label">Merek Produk</label>
-                            <input type="text" class="form-control" id="product_brand" name="product_brand" autofocus required>
+                            <input type="text" class="form-control" id="product_brand" name="product_brand" autofocus
+                                required>
                         </div>
                     </div>
                     <div class="form-group form-float">
                         <div class="form-line">
                             <label class="form-label">Harga Beli</label>
-                            <input type="text" class="form-control" id="purchase_price" name="purchase_price" autofocus required>
+                            <input type="text" class="form-control" id="purchase_price" name="purchase_price" autofocus
+                                required>
                         </div>
                     </div>
                     <div class="form-group form-float">
@@ -52,20 +56,32 @@
                     <div class="form-group form-float">
                         <div class="form-line">
                             <label class="form-label">Harga Jual</label>
-                            <input type="text" class="form-control" id="selling_price" name="selling_price" autofocus required>
+                            <input type="text" class="form-control" id="selling_price" name="selling_price" autofocus
+                                required>
                         </div>
                     </div>
                     <div class="form-group form-float">
                         <div class="form-line">
-                            <label class="form-label">Stok Produk</label>
-                            <input type="text" class="form-control" id="product_stock" name="product_stock" autofocus required>
+                            <label class="form-label">Stok Awal</label>
+                            <input type="text" class="form-control" id="product_stock" name="product_stock" autofocus
+                                required>
                         </div>
                     </div>
-	            </div>
-	            <div class="modal-footer">
-	                <button type="button" class="btn btn-secondary" data-dismiss="modal">BATAL</button>
+                    <div class="form-group form-float">
+                        <div class="form-line">
+                            <select id="unit_id" type="text" name="unit_id" class="form-control show-tick" required>
+                                <option value="">-- Pilih Satuan / Unit --</option>
+                                @foreach($units as $list)
+                                <option value="{{$list->id}}">{{$list->name}}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">BATAL</button>
                     <button type="submit" class="btn btn-primary">SIMPAN</button>
-	            </div>
+                </div>
             </form>
         </div>
     </div>
