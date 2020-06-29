@@ -19,23 +19,27 @@ Laporan Keuangan
 						<div class="col-3">
 							<div class="form-group">
 								<label for="">Dari Tanggal</label>
-								<input type="date" class="form-control" name="from" required value="{{ $begin }}">
+								<input type="date" class="form-control" name="begin" required value="{{ $begin }}">
 							</div>
 						</div>
 						<div class="col-3">
 							<div class="form-group">
 								<label for="">Sampai Tanggal</label>
-								<input type="date" class="form-control" name="to" required value="{{ $end }}">
+								<input type="date" class="form-control" name="end" required value="{{ $end }}">
 							</div>
 						</div>
 						<div class="col-3">
 							<div class="form-group">
 								<label for="">Divisi</label>
-								<select name="division_id" class="form-control">
+								<select name="division" class="form-control">
 									<option value="0">Semua</option>
 									@if($divisions->count() > 0)
 									@foreach($divisions as $key => $value)
+									@if($division == $value->id)
+									<option value="{{$value->id}}" selected>{{$value->name}}</option>
+									@else
 									<option value="{{$value->id}}">{{$value->name}}</option>
+									@endif
 									@endforeach
 									@endif
 								</select>
@@ -44,10 +48,19 @@ Laporan Keuangan
 						<div class="col-3">
 							<div class="form-group">
 								<label for="">Jenis Keuangan</label>
-								<select name="payment_id" class="form-control">
+								<select name="payment" class="form-control">
 								<option value="0">Semua</option>
 								@if($payments->count() > 0)
 								@foreach($payments as $key => $value)
+								@if($payment == $value->id)
+								<option value="{{ $value->id }}" selected>
+									@if($value->bank_name == "")
+									CASH
+									@else
+									{{$value->bank_name}} - {{$value->account_number}} - {{$value->account_name}}
+									@endif
+								</option>
+								@else
 								<option value="{{ $value->id }}">
 									@if($value->bank_name == "")
 									CASH
@@ -55,6 +68,7 @@ Laporan Keuangan
 									{{$value->bank_name}} - {{$value->account_number}} - {{$value->account_name}}
 									@endif
 								</option>
+								@endif
 								@endforeach
 								@endif
 							</select>
@@ -78,7 +92,7 @@ Laporan Keuangan
       <button class="btn btn-primary" type="button" id="dropdownMenuButton2" data-toggle="dropdown" aria-haspopup="true"
         aria-expanded="false"><i class="fas fa-th-large"></i></button>
       <div class="dropdown-menu">
-        <a href="" target="_blank" class="dropdown-item has-icon"><i
+	  <a href="accounting-report/pdf/{{$begin}}/{{$end}}/{{$division}}/{{$payment}}" target="_blank" class="dropdown-item has-icon"><i
             class="fas fa-file-pdf"></i>Export PDF</a>
       </div>
     </div>

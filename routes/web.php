@@ -100,7 +100,9 @@ Route::group(['middleware' => ['web', 'usercheck:1']], function(){
 	Route::get('report/data/{begin}/{end}', 'ReportController@listData')->name('report.data');
 	Route::get('report/pdf/{begin}/{end}', 'ReportController@exportPDF');
 	Route::get('accounting-report', 'ReportController@reportAccounting')->name('accountingreports.index');
+	Route::post('accounting-report', 'ReportController@refreshAccounting')->name('accountingreports.refresh');
 	Route::get('accounting-report/data/{begin}/{end}/{division}/{payment}', 'ReportController@reportAccountingList')->name('accountingreports.data');
+	Route::get('accounting-report/pdf/{begin}/{end}/{division}/{payment}', 'ReportController@exportAccountingPDF')->name('accountingreports.pdf');
 
 	Route::resource('setting', 'SettingController');
 

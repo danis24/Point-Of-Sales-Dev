@@ -10,6 +10,7 @@ use App\Repayment;
 use App\Division;
 use App\Payment;
 use App\sellingDetails;
+use App\PurchaseDetails;
 use DB;
 use PDF;
 
@@ -37,6 +38,17 @@ class ReportController extends Controller
 		$division = 0;
 		$payment = 0;
 	   	return view("report.accountingreports", compact("divisions", "payments", "begin", "end", "division", "payment"));
+   }
+
+   public function refreshAccounting(Request $request)
+   {
+		$divisions = Division::all();
+		$payments = Payment::all();
+     	$begin = $request['begin'];
+	 	$end = $request['end'];
+	 	$division = $request['division'];
+		$payment = $request['payment'];
+		return view("report.accountingreports", compact("divisions", "payments", "begin", "end", "division", "payment"));
    }
 
    public function reportAccountingList($begin, $end, $division, $payment)
@@ -70,7 +82,9 @@ class ReportController extends Controller
 					$selling_products = sellingDetails::where("selling_id", $value->selling_id)->join("product", "product.product_code", "=", "selling_details.product_code")->get();
 					$product_lists = "";
 					foreach($selling_products as $k => $v){
-						$product_lists .= $v->product_name."<br>";
+						$product_lists .= "<ul>";
+						$product_lists .= "<li>".$v->product_name." [".$v->total." x ".currency_format($v->selling_price)." Discount : ".$v->discount."%]".
+						$product_lists .= "</ul>";
 					}
 					$row[] = "Penjualan Produk : ".$product_lists;
 					$row[] = $value->pay;
@@ -92,7 +106,16 @@ class ReportController extends Controller
 				}else{
 					$row[] = $value->payment->bank_name." - ".$value->payment->account_number." - ".$value->payment->account_name;
 				}
-				$row[] = "Pembelian Barang di Supplier ".$value->supplier_name." dengan rincian <a href=''>Produk</a>";
+				$purchase_details = PurchaseDetails::where("purchase_id", "=", $value->purchase_id)->join('supplier_products', 'supplier_products.id', '=', 'purchase_details.product_code')->get();
+				$product_lists = "";
+				if($purchase_details->count() > 0){
+					foreach($purchase_details as $k => $v){
+						$product_lists .= "<ul>";
+						$product_lists .= "<li>".$v->product_name." [".$v->total." x ".currency_format($v->purchase_price)."]"."</li>" ;
+						$product_lists .= "</ul>";
+					}
+				}
+				$row[] = "Pembelian Barang di Supplier ".$value->supplier_name." dengan rincian : ".$product_lists;
 				$row[] = "";
 				$row[] = $value->pay;
 				$purchase_data[] = $row;
@@ -162,43 +185,43 @@ class ReportController extends Controller
 
    public function spendingDetail($begin, $end, $division, $payment)
    {
-		$selling = Spending::whereBetween('created_at', [$begin, $end]);
+		$spending = Spending::whereBetween('created_at', [$begin." 00:00:00", $end." 23:59:59"]);
 		if($division != 0){
-			$selling->where("division_id", $division);
+			$spending->where("division_id", $division);
 		}
 		if($payment != 0){
-			$selling->where("payment_id", $payment);
+			$spending->where("payment_id", $payment);
 		}
-		return $selling->get();
+		return $spending->get();
    }
 
    public function repaymentDetail($begin, $end, $division, $payment)
    {
-		$selling = Repayment::whereBetween('date', [$begin, $end]);
+		$repayment = Repayment::whereBetween('date', [$begin, $end]);
 		if($division != 0){
-			$selling->where("division_id", $division);
+			$repayment->where("division_id", $division);
 		}
 		if($payment != 0){
-			$selling->where("payment_id", $payment);
+			$repayment->where("payment_id", $payment);
 		}
-		return $selling->get();
+		return $repayment->get();
    }
 
    public function purchaseDetail($begin, $end, $division, $payment)
    {
-		$selling = Purchase::whereBetween('created_at', [$begin, $end])->join('supplier', 'supplier.supplier_id', '=', 'purchase.supplier_id');
+		$purchase = Purchase::whereBetween('purchase.created_at', [$begin." 00:00:00", $end." 23:59:59"])->join('purchase_details', 'purchase_details.purchase_id', '=', 'purchase.purchase_id')->join('supplier', 'supplier.supplier_id', '=', 'purchase.supplier_id');
 		if($division != 0){
-			$selling->where("division_id", $division);
+			$purchase->where("division_id", $division);
 		}
 		if($payment != 0){
-			$selling->where("payment_id", $payment);
+			$purchase->where("payment_id", $payment);
 		}
-		return $selling->get();
+		return $purchase->get();
    }
 
    public function sellingDetail($begin, $end, $division, $payment)
    {
-		$selling = Selling::whereBetween('created_at', [$begin, $end]);
+		$selling = Selling::whereBetween('created_at', [$begin." 00:00:00", $end." 23:59:59"]);
 		if($division != 0){
 			$selling->where("division_id", $division);
 		}
@@ -265,8 +288,64 @@ class ReportController extends Controller
    public function exportPDF($begin, $end){
      $date_begin = $begin;
      $date_end = $end;
-	 return PDF::loadHTML($this->resultHtml($begin, $end))->setPaper('a4', 'landscape')->stream('download.pdf');
+	 return PDF::loadHTML($this->resultHtml($begin, $end))->stream('download.pdf');
    }
+
+   public function exportAccountingPDF($begin, $end, $division, $payment){
+	$date_begin = $begin;
+	$date_end = $end;
+	return PDF::loadHTML($this->resultHtmlAccounting($begin, $end, $division, $payment))->setPaper('a4', 'landscape')->stream('download.pdf');
+  }
+  public function resultHtmlAccounting($begin, $end, $division, $payment)
+  {
+	   $data = $this->reportAccountingData($begin, $end, $division, $payment);
+	   $output = "<h1>Laporan Keuangan</h1>";
+	   $output .= "<h3>Periode ".indo_date($begin, false)." s/d ".indo_date($end, false)."</h3><br><hr>";
+	   $output .= "<style>
+		 .vuln {
+			font-size: 12px;
+		   font-family: 'Trebuchet MS', Arial, Helvetica, sans-serif;
+		   border-collapse: collapse;
+		   width: 100%;
+		 }
+
+		 .vuln td, .vuln th {
+		   border: 1px solid #ddd;
+		   padding: 8px;
+		   word-wrap:break-word
+		 }
+
+		 .vuln tr:nth-child(even){background-color: #f2f2f2;}
+
+		 .vuln tr:hover {background-color: #ddd;}
+
+		 .vuln th {
+		   padding-top: 12px;
+		   padding-bottom: 12px;
+		   text-align: left;
+		   background-color: #131633;
+		   color: white;
+		 }
+		 table{
+		   table-layout: fixed;
+		   }
+		 </style>";
+	   $output .= "<table class='vuln'><thead><tr><th width='4%'>No</th><th width='10%'>Tanggal</th><th>Divisi</th><th width='20%'>Jenis Pembayaran</th><th width='30%'>Keterangan</th><th>Pemasukan</th><th>Pengeluaran</th><th>Saldo</th></tr></thead><tbody>";
+	   foreach ($data as $key => $value) {
+		   $output .= "<tr><td>".$value[0]."</td>";
+		   $output .= "<td>".$value[1]."</td>";
+		   $output .= "<td>".$value[2]."</td>";
+		   $output .= "<td>".$value[3]."</td>";
+		   $output .= "<td>".$value[4]."</td>";
+		   $output .= "<td align='center'>".$value[5]."</td>";
+		   $output .= "<td align='center'>".$value[6]."</td>";
+		   $output .= "<td align='center'>".$value[7]."</td>";
+		   $output .= "</tr>";
+	   }
+
+	   $output .= "</tbody></table>";
+	   return $output;
+  }
 
    public function resultHtml($begin, $end)
    {
