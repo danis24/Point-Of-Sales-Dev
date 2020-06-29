@@ -92,7 +92,7 @@
 		$('input[name=_method]').val('PATCH');
 		$('#modal-form form')[0].reset();
 		$.ajax({
-			url			: "divisions/"+id+"/edit",
+			url			: "payments/"+id+"/edit",
 			type 		: "GET",
 			dataType	: "JSON",
 			success		: function(data){
@@ -100,7 +100,10 @@
 				$('.modal-title').text('Edit Divisi');
 
 				$('#id').val(data.id);
-				$('#division_name').val(data.name);
+				$('#payment_type').val(data.payment_type);
+				$('#bank_name').val(data.bank_name);
+				$('#account_number').val(data.account_number);
+				$('#account_name').val(data.account_name);
 			},
 			error		: function(){
 				alert("Tidak dapat menampilkan data!");
@@ -111,7 +114,7 @@
 	function deleteData(id){
 		if(confirm("Apakah yakin data akan dihapus?")){
 			$.ajax({
-				url		: "divisions/"+id,
+				url		: "payments/"+id,
 				type 	: "POST",
 				data 	: {'_method' : 'DELETE', '_token' : $('meta[name=csrf-token]').attr('content')},
 				success : function(data){
