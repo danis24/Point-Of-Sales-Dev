@@ -20,9 +20,15 @@ class PaymentTableSeeder extends Seeder
             ],
             [
                 'type'			=>	'bank',
-                'bank_name' => 'BCA',
-                'account_number' => '186718676712',
+                'bank_name' => 'BCA ERSO',
+                'account_number' => '2831920086',
                 'account_name' => 'Danis Yogaswara'
+            ],
+            [
+                'type'			=>	'bank',
+                'bank_name' => 'BCA MARKAS',
+                'account_number' => '2831612667',
+                'account_name' => 'Erwin Fahmi Sobirin'
             ]
         ));
     }
