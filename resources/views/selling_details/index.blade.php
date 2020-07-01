@@ -165,40 +165,41 @@ Detail Penjualan
 <script src="{{asset('stisla/js/webcodecamjs.js')}}"></script>
 <script type="text/javascript">
   var txt = "innerText" in HTMLElement.prototype ? "innerText" : "textContent";
-    var arg = {
-        resultFunction: function(result) {
-            $("#product_code").val(result.code);
-            console.log(result.code);
-
-        }
-    };
-    var decoder = new WebCodeCamJS("canvas").buildSelectMenu('#camera-select', 'environment|back').init(arg);
-    $("#play").click(function () {
-      if (decoder.isInitialized()) {
-        decoder.play();
-        console.log("Play");
+  var arg = {
+      resultFunction: function(result) {
+          let product_code = $("#product_code");
+          product_code.val(result.code)
+          if(product_code.val() != ""){
+            addItem()
+          }
       }
-    });
-    $("#stop").click(function () {
-      if (decoder.isInitialized()) {
-        decoder.stop();
-        console.log("Stop");
-      }
-    });
-    $("#pause").click(function () {
-      if (decoder.isInitialized()) {
-        decoder.pause();
-        console.log("Pause");
-      }
-    });
-    $("#camera-select").change(function () {
-      if (decoder.isInitialized()) {
-        decoder.stop().play();
-        console.log("Change");
-      }
-    });
-</script>
-<script type="text/javascript">
+  };
+  var decoder = new WebCodeCamJS("canvas").buildSelectMenu('#camera-select', 'environment|back').init(arg);
+  $("#play").click(function () {
+    if (decoder.isInitialized()) {
+      decoder.play();
+      console.log("Play");
+    }
+  });
+  $("#stop").click(function () {
+    if (decoder.isInitialized()) {
+      decoder.stop();
+      console.log("Stop");
+    }
+  });
+  $("#pause").click(function () {
+    if (decoder.isInitialized()) {
+      decoder.pause();
+      console.log("Pause");
+    }
+  });
+  $("#camera-select").change(function () {
+    if (decoder.isInitialized()) {
+      decoder.stop().play();
+      console.log("Change");
+    }
+  });
+  
   var table;
   $(function () {
     $('.table-product').DataTable();
