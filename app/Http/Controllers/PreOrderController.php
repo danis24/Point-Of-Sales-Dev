@@ -40,6 +40,10 @@ class PreOrderController extends Controller
         $preorders = $this->model->orderBy('id', 'asc')->get();
         $no = 0;
         $data = array();
+        $count_total_price = 0;
+        $count_total_repayment = 0;
+        $count_reminder = 0;
+
         foreach ($preorders as $key => $value) {
             $repayments = $this->repayment->where("pre_order_id", $value->id)->get();
             $repayment_count = 0;
@@ -57,10 +61,13 @@ class PreOrderController extends Controller
             $row[] = $value->member->member_name;
             $row[] = $value->details;
             $row[] = $value->qty;
-            $row[] = "Rp. ".currency_format($value->price);
-            $row[] = "Rp. ".currency_format($total_price);
-            $row[] = "Rp. ".currency_format($repayment_count);
-            $row[] = "Rp. ".currency_format($reminder);
+            $row[] = "Rp.".currency_format($value->price);
+            $row[] = "Rp.".currency_format($total_price);
+            $row[] = "Rp.".currency_format($repayment_count);
+            $row[] = "Rp.".currency_format($reminder);
+            $count_total_price += $total_price;
+            $count_total_repayment += $repayment_count;
+            $count_reminder += $reminder;
             if($reminder > 0){
                 $row[] = "<label class='badge badge-danger'>Belum Lunas</label>";
             }else{
@@ -84,6 +91,7 @@ class PreOrderController extends Controller
                      </tr>';
             $data[] = $row;
         }
+        $data[] = array("","","","","","","<b>Rp.".currency_format($count_total_price)."</b>", "<b>Rp.".currency_format($count_total_repayment)."</b>", "<b>Rp.".currency_format($count_reminder)."</b>","","");
         $output = array("data" => $data);
         return response()->json($output);
     }

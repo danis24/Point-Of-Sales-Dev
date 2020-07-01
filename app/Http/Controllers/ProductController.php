@@ -8,6 +8,7 @@ use App\Product;
 use App\Unit;
 use DataTables;
 use PDF;
+use QrCode;
 use App\Stock;
 
 class ProductController extends Controller
@@ -118,7 +119,11 @@ class ProductController extends Controller
         {
         	foreach ($request['id'] as $id) {
         		$product = Product::find($id);
-        		$data_product[] = $product;
+        		$data_product[] = [
+					"product_name" => $product->product_name,
+					"selling_price" => $product->selling_price,
+					"product_code" => $product->product_code,
+				];
         	}
 		}
     	$no = 1;

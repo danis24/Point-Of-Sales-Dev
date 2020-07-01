@@ -52,7 +52,10 @@ Pre Order
 				"language": {
 					"url": "{{asset('tables_indo.json')}}",
 				},
+				"bSort": false,
+				"bPaginate": false,
 				"processing": true,
+				"serverside": true,
 				"ajax": {
 					"url": "{{route('preorders.data')}}",
 					"type": "GET"

@@ -228,6 +228,7 @@ return [
         'Datatables' => Yajra\Datatables\Facades\Datatables::class,
         'DNS1D' => Milon\Barcode\Facades\DNS1DFacade::class,
         'PDF' => Barryvdh\DomPDF\Facade::class,
+        'QrCode' => chillerlan\QRCode::class
 
     ],
 
