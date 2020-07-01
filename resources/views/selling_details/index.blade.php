@@ -176,7 +176,7 @@ Detail Penjualan
     };
     new WebCodeCamJS("canvas").init(arg).play();
     var decoder = new WebCodeCamJS("canvas").buildSelectMenu('#camera-select', 'environment|back').init(arg).play();
-    document.querySelector('#camera-select').addEventListener('change', function(){
+    $("#camera-select").change(function () {
       decoder.stop().play();
     });
 </script>
