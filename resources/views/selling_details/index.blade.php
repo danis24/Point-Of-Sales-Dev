@@ -8,16 +8,14 @@ Detail Penjualan
 <div class="card">
   <div class="card-body">
     <h3>QR CODE SCANNER</h3>
-    <div class="text-center">
-    <hr>
-    <div class="form-group">
-      <label for="" class="control-label">Pilih Kamera</label>
-      <select id="camera-select" class="form-control"></select>
-    </div>
-    <hr>
-    <canvas></canvas>
-    <hr>
-  </div>
+      <hr>
+      <select id="camera-select" class="form-control"></select><br>
+      <button class="btn btn-success" id="play"><i class="fa fa-play"></i></button>
+      <button class="btn btn-warning" id="pause"><i class="fa fa-pause"></i></button>
+      <button class="btn btn-danger" id="stop"><i class="fa fa-stop"></i></button>
+      <hr>
+      <canvas></canvas>
+      <hr>
   </div>
 </div>
 <div class="card">
@@ -174,11 +172,30 @@ Detail Penjualan
 
         }
     };
-    new WebCodeCamJS("canvas").init(arg).play();
-    var decoder = new WebCodeCamJS("canvas").buildSelectMenu('#camera-select', 'environment|back').init(arg).play();
+    var decoder = new WebCodeCamJS("canvas").buildSelectMenu('#camera-select', 'environment|back').init(arg);
+    $("#play").click(function () {
+      if (decoder.isInitialized()) {
+        decoder.play();
+        console.log("Play");
+      }
+    });
+    $("#stop").click(function () {
+      if (decoder.isInitialized()) {
+        decoder.stop();
+        console.log("Stop");
+      }
+    });
+    $("#pause").click(function () {
+      if (decoder.isInitialized()) {
+        decoder.pause();
+        console.log("Pause");
+      }
+    });
     $("#camera-select").change(function () {
-      decoder.stop().play();
-      alert("Change Success");
+      if (decoder.isInitialized()) {
+        decoder.stop().play();
+        console.log("Change");
+      }
     });
 </script>
 <script type="text/javascript">
