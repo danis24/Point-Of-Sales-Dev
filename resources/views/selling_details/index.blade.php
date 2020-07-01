@@ -178,6 +178,7 @@ Detail Penjualan
     var decoder = new WebCodeCamJS("canvas").buildSelectMenu('#camera-select', 'environment|back').init(arg).play();
     $("#camera-select").change(function () {
       decoder.stop().play();
+      alert("Change Success");
     });
 </script>
 <script type="text/javascript">
