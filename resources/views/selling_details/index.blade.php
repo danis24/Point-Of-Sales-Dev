@@ -7,6 +7,17 @@ Detail Penjualan
 @section('content')
 <div class="card">
   <div class="card-body">
+    <h3>QR CODE SCANNER</h3>
+  <hr>
+  <div class="text-center">
+    <canvas></canvas>
+  </div>
+  <hr>
+  <ul></ul>
+  </div>
+</div>
+<div class="card">
+  <div class="card-body">
     <form class="form form-horizontal form-product" method="post">
       {{ csrf_field() }}
       <input type="hidden" name="selling_id" value="{{ $selling_id }}">
@@ -148,7 +159,19 @@ Detail Penjualan
 
 @include('selling_details.product')
 @include('selling_details.member')
+<script src="{{asset('stisla/js/qrcodelib.js')}}"></script>
+<script src="{{asset('stisla/js/webcodecamjs.js')}}"></script>
+<script type="text/javascript">
+  var txt = "innerText" in HTMLElement.prototype ? "innerText" : "textContent";
+    var arg = {
+        resultFunction: function(result) {
+            $("#product_code").val(result.code);
+            console.log(result.code);
 
+        }
+    };
+    new WebCodeCamJS("canvas").init(arg).play();
+</script>
 <script type="text/javascript">
   var table;
   $(function () {

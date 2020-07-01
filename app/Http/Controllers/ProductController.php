@@ -8,7 +8,7 @@ use App\Product;
 use App\Unit;
 use DataTables;
 use PDF;
-use QrCode;
+use DNS2D;
 use App\Stock;
 
 class ProductController extends Controller
@@ -118,11 +118,13 @@ class ProductController extends Controller
         if (is_array($request['id']) || is_object($request['id']))
         {
         	foreach ($request['id'] as $id) {
-        		$product = Product::find($id);
+				$product = Product::find($id);
+				$product_code = $product->product_code;
         		$data_product[] = [
 					"product_name" => $product->product_name,
 					"selling_price" => $product->selling_price,
-					"product_code" => $product->product_code,
+					"product_code" => $product_code,
+					"QRCode" => DNS2D::getBarcodePNG((string)$product_code, 'QRCODE')
 				];
         	}
 		}
