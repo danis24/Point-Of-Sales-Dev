@@ -296,6 +296,7 @@ class ReportController extends Controller
 	$date_end = $end;
 	return PDF::loadHTML($this->resultHtmlAccounting($begin, $end, $division, $payment))->setPaper('a4', 'landscape')->stream('download.pdf');
   }
+  
   public function resultHtmlAccounting($begin, $end, $division, $payment)
   {
 	   $data = $this->reportAccountingData($begin, $end, $division, $payment);

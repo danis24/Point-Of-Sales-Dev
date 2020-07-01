@@ -7,12 +7,61 @@ Pre Order
 @section('content')
 <!-- Body Copy -->
 <div class="card">
+	<div class="card-header">
+		Filter
+	</div>
+
+	<div class="card-body">
+		<form action="" method="POST">
+			@csrf
+			<div class="row">
+				<div class="col-4">
+					<div class="form-group">
+						<label for="">Dari Tanggal</label>
+						<input type="date" class="form-control" name="begin" id="begin" required value="{{ $begin }}">
+					</div>
+				</div>
+				<div class="col-4">
+					<div class="form-group">
+						<label for="">Sampai Tanggal</label>
+						<input type="date" class="form-control" name="end" id="end" required value="{{ $end }}">
+					</div>
+				</div>
+				<div class="col-4">
+					<div class="form-group">
+						<label for="">Divisi</label>
+						<select name="division" id="division" class="form-control">
+							<option value="0">Semua</option>
+							@if($divisions->count() > 0)
+							@foreach($divisions as $key => $value)
+							@if($division == $value->id)
+							<option value="{{$value->id}}" selected>{{$value->name}}</option>
+							@else
+							<option value="{{$value->id}}">{{$value->name}}</option>
+							@endif
+							@endforeach
+							@endif
+						</select>
+					</div>
+				</div>
+				<div class="col-12">
+					<div class="form-group">
+						<label for=""></label>
+						<button type="button" id="button_filter" class="btn btn-success">FILTER</button>
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+<div class="card">
 	<div class="card-body">
 		<div class="dropdown d-inline">
 			<button class="btn btn-primary" type="button" id="dropdownMenuButton2" data-toggle="dropdown"
 				aria-haspopup="true" aria-expanded="false"><i class="fas fa-th-large"></i></button>
 			<div class="dropdown-menu">
 				<a class="dropdown-item has-icon" onclick="addForm()"><i class="fas fa-plus"></i>Tambah Pre Order</a>
+				<a id="exportPDF" class="dropdown-item has-icon"><i class="fas fa-file-pdf"></i>Export PDF</a>
 			</div>
 		</div>
 		<div class="card-body">
@@ -22,6 +71,7 @@ Pre Order
 						<tr>
 							<th width="5%">No</th>
 							<th>Tanggal</th>
+							<th>Divisi</th>
 							<th>Nama</th>
 							<th>Rincian</th>
 							<th>Qty</th>
@@ -57,7 +107,7 @@ Pre Order
 				"processing": true,
 				"serverside": true,
 				"ajax": {
-					"url": "{{route('preorders.data')}}",
+					"url": "{{url('preorders/data')}}/{{$begin}}/{{$end}}/{{$division}}",
 					"type": "GET"
 				}
 			});
@@ -72,7 +122,7 @@ Pre Order
 				if (!e.isDefaultPrevented()) {
 					var id = $('#id').val();
 					if (save_method == "add") url = "{{route('preorders.store')}}";
-					else url = "preorders/" + id;
+					else url = "{{url('preorders')}}/" + id;
 
 					$.ajax({
 						url: url,
@@ -90,11 +140,26 @@ Pre Order
 				}
 			});
 
+			$('#button_filter').click(function () {
+				let begin = $("#begin").val();
+				let end = $("#end").val();
+				let division = $("#division").val();
+				table.ajax.url("{{url('preorders/data')}}/"+begin+"/"+end+"/"+division+"");
+				table.ajax.reload();
+			});
+
+			$("#exportPDF").click(function () {
+				let begin = $("#begin").val();
+				let end = $("#end").val();
+				let division = $("#division").val();
+				window.open('{{url("preorders/report")}}/'+begin+'/'+end+'/'+division+'', '_blank')
+			});
+
 			$('#modal-repayment form').validator().on('submit', function (e) {
 				if (!e.isDefaultPrevented()) {
 					var id = $('#id').val();
 					if (save_method == "add") url = "{{route('repayments.store')}}";
-					else url = "repayments/" + id;
+					else url = "{{url('repayments')}}/" + id;
 
 					$.ajax({
 						url: url,
@@ -117,7 +182,7 @@ Pre Order
 		function showDetail(id) {
 			$('#modal-detail').modal('show');
 
-			table1.ajax.url("repayments/" + id + "/show");
+			table1.ajax.url("{{url('repayments')}}/" + id + "/show");
 			table1.ajax.reload();
 			table.ajax.reload();
 		}
@@ -144,7 +209,7 @@ Pre Order
 			$('input[name=_method]').val('PATCH');
 			$('#modal-form form')[0].reset();
 			$.ajax({
-				url: "preorders/" + id + "/edit",
+				url: "{{url('preorders')}}/" + id + "/edit",
 				type: "GET",
 				dataType: "JSON",
 				success: function (data) {
@@ -152,6 +217,7 @@ Pre Order
 					$('.modal-title').text('Edit Pre Order');
 
 					$('#id').val(data.id);
+					$('#division_id').val(data.division_id);
 					$('#date').val(data.date);
 					$('#member_id').val(data.member_id);
 					$('#details').val(data.details);
@@ -167,7 +233,7 @@ Pre Order
 		function deleteData(id) {
 			if (confirm("Apakah yakin data akan dihapus?")) {
 				$.ajax({
-					url: "preorders/" + id,
+					url: "{{url('preorders')}}/" + id,
 					type: "POST",
 					data: { '_method': 'DELETE', '_token': $('meta[name=csrf-token]').attr('content') },
 					success: function (data) {
@@ -183,7 +249,7 @@ Pre Order
 		function deleteItem(id) {
 			if (confirm("Apakah yakin data akan dihapus?")) {
 				$.ajax({
-					url: "repayments/" + id,
+					url: "{{url('repayments')}}/" + id,
 					type: "POST",
 					data: { '_method': 'DELETE', '_token': $('meta[name=csrf-token]').attr('content') },
 					success: function (data) {

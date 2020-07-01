@@ -17,6 +17,18 @@
                     </div>
                     <div class="form-group form-float">
                         <div class="form-line">
+                            <label class="form-label">Divisi</label>
+                            <select name="division_id" id="division_id" class="form-control">
+                                @if($divisions->count() > 0)
+                                @foreach($divisions as $key => $value)
+                                <option value="{{ $value->id }}">{{ $value->name }}</option>
+                                @endforeach
+                                @endif
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group form-float">
+                        <div class="form-line">
                             <label class="form-label">Members</label>
                             <select name="member_id" id="member_id" class="form-control">
                                 @if($members->count() > 0)
