@@ -37,7 +37,7 @@
                     <div class="form-group form-float">
                         <div class="form-line">
                             <label class="form-label">Kuantitas</label>
-                            <input type="number" name="qty" id="qty" class="form-control" placeholder="0">
+                            <input type="number" step="any" name="qty" id="qty" class="form-control" placeholder="0">
                         </div>
                     </div>
                     <div class="form-group form-float">

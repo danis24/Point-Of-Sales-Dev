@@ -18,7 +18,7 @@ class CreatePreOrdersTable extends Migration
             $table->date('date');
             $table->unsignedBigInteger('member_id');
             $table->text('details');
-            $table->bigInteger('qty');
+            $table->float('qty');
             $table->bigInteger('price');
             $table->timestamps();
             $table->foreign('member_id')->references('member_id')->on('member')->onUpdate('cascade')->onDelete('cascade');
