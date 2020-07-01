@@ -8,12 +8,16 @@ Detail Penjualan
 <div class="card">
   <div class="card-body">
     <h3>QR CODE SCANNER</h3>
-  <hr>
-  <div class="text-center">
+    <div class="text-center">
+    <hr>
+    <div class="form-group">
+      <label for="" class="control-label">Pilih Kamera</label>
+      <select id="camera-select" class="form-control"></select>
+    </div>
+    <hr>
     <canvas></canvas>
+    <hr>
   </div>
-  <hr>
-  <ul></ul>
   </div>
 </div>
 <div class="card">
@@ -171,6 +175,10 @@ Detail Penjualan
         }
     };
     new WebCodeCamJS("canvas").init(arg).play();
+    var decoder = new WebCodeCamJS("canvas").buildSelectMenu('#camera-select', 'environment|back').init(arg).play();
+    document.querySelector('#camera-select').addEventListener('change', function(){
+      decoder.stop().play();
+    });
 </script>
 <script type="text/javascript">
   var table;
