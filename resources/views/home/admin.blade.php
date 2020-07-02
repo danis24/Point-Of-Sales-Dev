@@ -121,7 +121,7 @@
         <div class="card-body">             
             <ul class="list-unstyled list-unstyled-border">
                 @if(count($sortDebt))
-                @foreach($sortDebt as $key => $value)
+                @foreach(array_slice($sortDebt, 0, 5) as $key => $value)
                 <li class="media">
                     <div class="media-body">
                         <div class="float-right text-primary">Rp. {{currency_format($value['reminder'])}}</div>

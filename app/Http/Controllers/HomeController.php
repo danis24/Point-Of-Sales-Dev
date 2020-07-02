@@ -106,7 +106,7 @@ class HomeController extends Controller
 				];
 			}
 		}
-		$sortDebt = collect($topDebt)->sortByDesc("reminder")->reverse()->toArray();
+		$sortDebt = collect($topDebt)->sortBy("reminder")->reverse()->toArray();
 
 		if (Auth::user()->level == 1)
 			return view('home.admin', compact('category', 'product', 'supplier', 'member', 'begin', 'end', 'data_income', 'data_income_preorder', 'data_date', 'debit_count', 'credit_count', 'balance', 'sortDebt'));
