@@ -132,5 +132,72 @@ class ProductController extends Controller
     	$pdf = PDF::loadView('product.barcode', compact('data_product', 'no'));
     	$pdf->setPaper('a4', 'potrait');
     	return $pdf->stream();
-    }
+	}
+
+	public function printProductStock(Request $request){
+		return PDF::loadHTML($this->resultHtml($request))->setPaper('a4', 'potrait')->stream('download.pdf');
+	}
+
+	public function resultHtml($request)
+  	{
+		$data = array();
+        if (is_array($request['id']) || is_object($request['id']))
+        {
+        	foreach ($request['id'] as $id) {
+				$product = Product::find($id);
+
+				$SumStockIn = $this->stock->where("product_id", "=", $product->product_id)->where("type", "=", "in")->sum("stocks");
+				$SumStockOut = $this->stock->where("product_id", "=", $product->product_id)->where("type", "=", "out")->sum("stocks");
+				$stocks = ($product->product_stock+$SumStockIn)-$SumStockOut;
+
+				$data[] = [
+					"product_code" => $product->product_code,
+					"product_name" => $product->product_name,
+					"stock" => $stocks." ".$product->unit->name
+				];
+        	}
+		}
+
+	   $output = "<h1>Laporan Stock Barang</h1>";
+	   $output .= "<style>
+		 .vuln {
+			font-size: 12px;
+		   font-family: 'Trebuchet MS', Arial, Helvetica, sans-serif;
+		   border-collapse: collapse;
+		   width: 100%;
+		 }
+
+		 .vuln td, .vuln th {
+		   border: 1px solid #ddd;
+		   padding: 8px;
+		   word-wrap:break-word
+		 }
+
+		 .vuln tr:nth-child(even){background-color: #f2f2f2;}
+
+		 .vuln tr:hover {background-color: #ddd;}
+
+		 .vuln th {
+		   padding-top: 12px;
+		   padding-bottom: 12px;
+		   text-align: left;
+		   background-color: #131633;
+		   color: white;
+		 }
+		 table{
+		   table-layout: fixed;
+		   }
+		 </style>";
+	   $output .= "<table class='vuln'><thead><tr><th width='5%'>No</th><th width='20%'>Kode Produk</th><th>Nama Produk</th><th width='20%'>Stok Produk</th></tr></thead><tbody>";
+	   foreach ($data as $key => $value) {
+		   $output .= "<tr><td>".($key+1)."</td>";
+		   $output .= "<td>".$value['product_code']."</td>";
+		   $output .= "<td>".$value['product_name']."</td>";
+		   $output .= "<td align='center'>".$value['stock']."</td>";
+		   $output .= "</tr>";
+	   }
+
+	   $output .= "</tbody></table>";
+	   return $output;
+  	}
 }

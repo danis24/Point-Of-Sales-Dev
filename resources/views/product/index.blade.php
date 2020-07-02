@@ -13,6 +13,7 @@
       <div class="dropdown-menu">
       	<a class="dropdown-item has-icon" onclick="addForm()"><i class="fas fa-plus"></i>Tambah Produk</a>
 	  	<a class="dropdown-item has-icon" onclick="printBarcode()"><i class="fas fa-print"></i>Print Barcode Produk</a>
+	  	<a class="dropdown-item has-icon" onclick="printStockProduct()"><i class="fas fa-print"></i>Print Stock Product</a>
 	  	<a class="dropdown-item has-icon" onclick="deleteAll()"><i class="fas fa-trash"></i>Hapus Semua Data</a>
       </div>
   </div>
@@ -182,6 +183,14 @@
 			alert('Pilih data yang akan dicetak!');
 		}else{
 			$('#form-product').attr('target', '_blank').attr('action', "product/print").submit();
+		}
+	}
+
+	function printStockProduct(){
+		if ($('input:checked').length < 1) {
+			alert('Pilih data yang akan dicetak!');
+		}else{
+			$('#form-product').attr('target', '_blank').attr('action', "product/print_stock").submit();
 		}
 	}
 </script>

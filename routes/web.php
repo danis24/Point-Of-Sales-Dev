@@ -51,6 +51,7 @@ Route::group(['middleware' => ['web', 'usercheck:1']], function(){
 	Route::get('product/data', 'ProductController@listData')->name('product.data');
 	Route::post('product/delete', 'ProductController@deleteSelected');
 	Route::post('product/print', 'ProductController@printBarcode');
+	Route::post('product/print_stock', 'ProductController@printProductStock');
 	Route::resource('product', 'ProductController');
 
 	Route::get('supplier/data', 'SupplierController@listData')->name('supplier.data');
@@ -138,6 +139,7 @@ Route::group(['middleware' => 'web'], function(){
 	Route::get('product/data', 'ProductController@listData')->name('product.data');
 	Route::post('product/delete', 'ProductController@deleteSelected');
 	Route::post('product/print', 'ProductController@printBarcode');
+	Route::post('product/print_stock', 'ProductController@printProductStock');
 	Route::resource('product', 'ProductController');
 
 	Route::get('stockin/data', 'StockController@listDataStockIn')->name('stockin.data');
