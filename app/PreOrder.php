@@ -19,4 +19,9 @@ class PreOrder extends Model
     {
         return $this->belongsTo("App\Division");
     }
+
+    public function repayments()
+    {
+        return $this->hasMany("App\Repayment");
+    }
 }

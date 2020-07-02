@@ -92,6 +92,12 @@
               <a href="#" class="nav-link has-dropdown"><i class="fas fa-hand-holding-usd"></i><span>Akunting</span></a>
               <ul class="dropdown-menu" style="display: none;">
                 <li>
+                  <a class="nav-link" href="{{route('supplier.index')}}">
+                    <i class="fas fa-dolly-flatbed"></i>
+                    <span>Supplier</span>
+                  </a>
+                </li>
+                <li>
                   <a class="nav-link" href="{{ route('divisions.index') }}">
                     <i class="fas fa-boxes"></i>
                     <span>Divisi</span>
@@ -134,15 +140,11 @@
                 </li>
               </ul>
             </li>
+            @endif
+            @if(Auth::user()->level==1 || Auth::user()->level==2)
             <li class="dropdown">
               <a href="#" class="nav-link has-dropdown"><i class="fas fa-boxes"></i><span>Inventory</span></a>
               <ul class="dropdown-menu">
-                <li>
-                  <a class="nav-link" href="{{route('supplier.index')}}">
-                    <i class="fas fa-dolly-flatbed"></i>
-                    <span>Supplier</span>
-                  </a>
-                </li>
                 <li class="dropdown">
                   <a href="#" class="nav-link has-dropdown"><i class="fas fa-boxes"></i><span>Products</span></a>
                   <ul class="dropdown-menu">
@@ -180,6 +182,8 @@
                 </li>
               </ul>
             </li>
+            @endif
+            @if(Auth::user()->level==1)
             <li class="dropdown">
               <a href="#" class="nav-link has-dropdown"><i class="fas fa-fire"></i><span>Point Of Sale</span></a>
               <ul class="dropdown-menu" style="display: none;">
@@ -215,7 +219,8 @@
                 </li>
               </ul>
             </li>
-            @else
+            @endif
+            @if(Auth::user()->level==2)
             <li>
               <a class="nav-link" href="{{route('transaction.index')}}">
                 <i class="fas fa-fire"></i>
