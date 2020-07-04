@@ -80,7 +80,7 @@ class ReportController extends Controller
 					} else {
 						$row[] = $value->payment->bank_name . " - " . $value->payment->account_number . " - " . $value->payment->account_name;
 					}
-					$selling_products = sellingDetails::where("selling_id", $value->selling_id)->join("product", "product.product_code", "=", "selling_details.product_code")->get();
+					$selling_products = SellingDetails::where("selling_id", $value->selling_id)->join("product", "product.product_code", "=", "selling_details.product_code")->get();
 					$product_lists = "";
 					foreach ($selling_products as $k => $v) {
 						$product_lists .= "<ul>";
