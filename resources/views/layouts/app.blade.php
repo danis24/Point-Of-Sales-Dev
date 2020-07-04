@@ -9,6 +9,7 @@
 
   <!-- General CSS Files -->
   <link rel="stylesheet" href="{{asset('stisla/modules/bootstrap/css/bootstrap.min.css')}}">
+  <link href="{{asset('stisla/dist/assets/modules/select2/dist/css/select2.min.css')}}" rel="stylesheet" />
   <link rel="stylesheet" href="{{asset('stisla/modules/fontawesome/css/all.min.css')}}">
   {{-- <link rel="stylesheet" href="{{asset('stisla/modules/datepicker/datepicker3.css')}}">
   --}} {{-- <link rel="stylesheet" href="{{asset('stisla/modules/bootstrap-daterangepicker/daterangepicker.css')}}">
@@ -276,9 +277,9 @@
   <script src="{{asset('stisla/modules/chart.min.js')}}"></script>
   <!-- Page Specific JS File -->
   {{-- <script src="{{asset('stisla/js/page/components-table.js')}}"></script>
-
   <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script> --}}
   <script src="{{asset('stisla/DataTables-1.10.20/datatables.min.js')}}"></script>
+  <script src="{{asset('stisla/dist/assets/modules/select2/dist/js/select2.full.min.js')}}"></script>
   <!-- Template JS File -->
   <script src="{{asset('stisla/js/scripts.js')}}"></script>
   <script src="{{asset('stisla/js/custom.js')}}"></script>

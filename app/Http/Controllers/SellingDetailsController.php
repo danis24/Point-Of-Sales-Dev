@@ -89,11 +89,11 @@ class SellingDetailsController extends Controller
       $input_name = "total_".$id;
       $discount = "discount_".$id;
       $detail = SellingDetails::find($id);
-      $total_price = $request[$input_name] * $detail->selling_price;
+      $total_price = $request[$input_name] * ($detail->selling_price-$request[$discount]);
 
       $detail->total = $request[$input_name];
       $detail->discount = $request[$discount];
-      $detail->sub_total = $total_price - ($request[$discount]/100 * $total_price);
+      $detail->sub_total = $total_price;
       $detail->update();
    }
 

@@ -89,12 +89,11 @@ Pre Order
 		</div>
 	</div>
 	@endsection
-
+	
 	@section('script')
 	@include('preorders.form')
 	@include('preorders.repayment')
 	@include('preorders.repaymentdetail')
-
 	<script type="text/javascript">
 		var table, table1, save_method;
 		$(function () {
@@ -116,6 +115,10 @@ Pre Order
 				"dom": 'Brt',
 				"bSort": false,
 				"processing": true
+			});
+
+			$("#member_id").select2({
+				width: '100%' // need to override the changed default
 			});
 
 			$('#modal-form form').validator().on('submit', function (e) {
