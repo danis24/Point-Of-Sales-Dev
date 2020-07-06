@@ -247,7 +247,7 @@ class PreOrderController extends Controller
 
     protected function whatsAppDebitText($data, $repayment_count, $reminder)
     {
-        $text = "Halo Bpk/Ibu *".$data->member->member_name."* %0a%0a Berikut merupakan tagihan dengan rincian : %0a===================%0aTanggal PO: ".indo_date($data->date)."%0aDetail PO : ".$data->details."%0aQty: ".$data->qty."%0aHarga Satuan : Rp.".currency_format($data->price)."%0aTotal Harga : Rp.".currency_format($data->qty*$data->price)."%0a===================%0aSudah Di Bayar : Rp.".currency_format($repayment_count)."%0aSisa : Rp.".currency_format($reminder)."%0a%0aMohon Untuk Segera Dilunasi Secepatnya,%0a%0aSalam, %0a ERSO PRIDATAMA (DIVISI ".$data->division->name.")";
+        $text = "Halo Bpk/Ibu *".$data->member->member_name."* %0a%0a Berikut merupakan tagihan dengan rincian : %0a===================%0aTanggal PO: ".indo_date($data->date)."%0aDetail PO : ".$data->details."%0aQty: ".$data->qty."%0aHarga Satuan : Rp.".currency_format($data->price)."%0aTotal Harga : Rp.".currency_format($data->qty*$data->price)."%0a===================%0aSudah Di Bayar : Rp.".currency_format($repayment_count)."%0aSisa : Rp.".currency_format($reminder)."%0a%0aMohon segera melakukan pembayaran,%0a%0aSalam, %0a ERSO PRIDATAMA (DIVISI ".$data->division->name.")";
         return $text;
     }
 
