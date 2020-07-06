@@ -218,6 +218,13 @@
                     <span>Keuangan</span>
                   </a>
                 </li>
+
+                <li>
+                  <a class="nav-link" href="{{ route('debitreports.index') }}">
+                    <i class="fas fa-download"></i>
+                    <span>Piutang</span>
+                  </a>
+                </li>
               </ul>
             </li>
             @endif

@@ -11,7 +11,9 @@ use App\Division;
 use App\Payment;
 use App\SellingDetails;
 use App\PurchaseDetails;
+use App\PreOrder;
 use DB;
+use App\Member;
 use PDF;
 
 class ReportController extends Controller
@@ -40,6 +42,17 @@ class ReportController extends Controller
 		return view("report.accountingreports", compact("divisions", "payments", "begin", "end", "division", "payment"));
 	}
 
+	public function reportDebit()
+	{
+		$divisions = Division::all();
+		$members = Member::all();
+		$begin = date('Y-m-d', mktime(0, 0, 0, date('m'), 1, date('Y')));
+		$end = date('Y-m-d');
+		$division = 0;
+		$member = 0;
+		return view("report.debitreports", compact("divisions", "members", "begin", "end", "division", "member"));
+	}
+
 	public function refreshAccounting(Request $request)
 	{
 		$divisions = Division::all();
@@ -56,6 +69,53 @@ class ReportController extends Controller
 		$data = $this->reportAccountingData($begin, $end, $division, $payment);
 		$output = array("data" => $data);
 		return response()->json($output);
+	}
+
+	public function reportDebitData($begin, $end, $division, $member)
+	{
+		$data = $this->reportDebitList($begin, $end, $division, $member);
+		$output = array("data" => $data);
+		return response()->json($output);
+	}
+
+	public function reportDebitList($begin, $end, $division, $member)
+	{
+		$pre_orders = $this->preOrderDetail($begin, $end, $division, $member);
+		$debit_data = [];
+		$total_price = 0;
+		$total_reminder = 0;
+		$no = 0;
+		if($pre_orders->count() > 0){
+			foreach($pre_orders as $key => $value){
+				$repayments = Repayment::where("pre_order_id", $value->id)->get();
+				$reminder = 0;
+
+				if($repayments->count() > 0){
+					foreach($repayments as $repayment_key => $repayment_value){
+						$reminder += (int) $repayment_value->nominal;
+					}
+				}
+
+				if($reminder < ($value->qty*$value->price)){
+					$row = [];
+					$row[] = $no+1;
+					$row[] = indo_date($value->date, false);
+					$row[] = $value->division->name;
+					$row[] = $value->member->member_name;
+					$row[] = $value->details;
+					$row[] = $value->qty;
+					$row[] = "Rp.".currency_format($value->price);
+					$row[] = "Rp.".currency_format($value->qty*$value->price);
+					$row[] = "Rp.".currency_format(($value->qty*$value->price)-$reminder);
+					$debit_data[] = $row;
+					
+					$total_price += ($value->qty*$value->price);
+					$total_reminder += ($value->qty*$value->price)-$reminder;
+				}
+			}
+		}
+		$debit_data[] = ["", "", "", "", "", "", "", "Rp.".currency_format($total_price), "Rp.".currency_format($total_reminder)];
+		return $debit_data;
 	}
 
 	protected function reportAccountingData($begin, $end, $division, $payment)
@@ -183,6 +243,18 @@ class ReportController extends Controller
 		return $result_array;
 	}
 
+	public function preOrderDetail($begin, $end, $division, $member)
+	{
+		$pre_order = PreOrder::whereBetween("date", [$begin, $end]);
+		if ($division != 0) {
+			$pre_order->where("division_id", $division);
+		}
+		if ($member != 0) {
+			$pre_order->where("member_id", $member);
+		}
+		return $pre_order->get();
+	}
+
 	public function spendingDetail($begin, $end, $division, $payment)
 	{
 		$spending = Spending::whereBetween('created_at', [$begin . " 00:00:00", $end . " 23:59:59"]);
@@ -288,15 +360,16 @@ class ReportController extends Controller
 
 	public function exportPDF($begin, $end)
 	{
-		$date_begin = $begin;
-		$date_end = $end;
 		return PDF::loadHTML($this->resultHtml($begin, $end))->stream('download.pdf');
+	}
+
+	public function exportPDFDebit($begin, $end, $division, $member)
+	{
+		return PDF::loadHTML($this->resultHtmlDebit($begin, $end, $division, $member))->setPaper('a4', 'landscape')->stream('download.pdf');
 	}
 
 	public function exportAccountingPDF($begin, $end, $division, $payment)
 	{
-		$date_begin = $begin;
-		$date_end = $end;
 		return PDF::loadHTML($this->resultHtmlAccounting($begin, $end, $division, $payment))->setPaper('a4', 'landscape')->stream('download.pdf');
 	}
 
@@ -393,6 +466,58 @@ class ReportController extends Controller
 			$output .= "<td align='center'>" . $value[4] . "</td>";
 			$output .= "<td align='center'>" . $value[5] . "</td>";
 			$output .= "<td align='center'>" . $value[6] . "</td>";
+			$output .= "</tr>";
+		}
+
+		$output .= "</tbody></table>";
+		return $output;
+	}
+
+	public function resultHtmlDebit($begin, $end, $division, $member)
+	{
+		$data = $this->reportDebitList($begin, $end, $division, $member);
+		$output = "<h1>Laporan Piutang</h1>";
+		$output .= "<h3>Periode " . indo_date($begin, false) . " s/d " . indo_date($end, false) . "</h3><br><hr>";
+		$output .= "<style>
+		 .vuln {
+			font-size: 12px;
+		   font-family: 'Trebuchet MS', Arial, Helvetica, sans-serif;
+		   border-collapse: collapse;
+		   width: 100%;
+		 }
+
+		 .vuln td, .vuln th {
+		   border: 1px solid #ddd;
+		   padding: 8px;
+		   word-wrap:break-word
+		 }
+
+		 .vuln tr:nth-child(even){background-color: #f2f2f2;}
+
+		 .vuln tr:hover {background-color: #ddd;}
+
+		 .vuln th {
+		   padding-top: 12px;
+		   padding-bottom: 12px;
+		   text-align: left;
+		   background-color: #131633;
+		   color: white;
+		 }
+		 table{
+		   table-layout: fixed;
+		   }
+		 </style>";
+		$output .= "<table class='vuln'><thead><tr><th width='4%'>No</th><th width='8%'>Tanggal</th><th width='10%'>Divisi</th><th width='15%'>Nama</th><th width='15%'>Rincian</th><th width='6%'>Qty</th><th>Harga</th><th>Total Harga</th><th>Hutang</th></tr></thead><tbody>";
+		foreach ($data as $key => $value) {
+			$output .= "<tr><td>" . $value[0] . "</td>";
+			$output .= "<td>" . $value[1] . "</td>";
+			$output .= "<td>" . $value[2] . "</td>";
+			$output .= "<td>" . $value[3] . "</td>";
+			$output .= "<td>" . $value[4] . "</td>";
+			$output .= "<td align='center'>" . $value[5] . "</td>";
+			$output .= "<td align='center'>" . $value[6] . "</td>";
+			$output .= "<td align='center'>" . $value[7] . "</td>";
+			$output .= "<td align='center'>" . $value[8] . "</td>";
 			$output .= "</tr>";
 		}
 

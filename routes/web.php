@@ -101,10 +101,15 @@ Route::group(['middleware' => ['web', 'usercheck:1']], function(){
 	Route::post('report', 'ReportController@refresh')->name('report.refresh');
 	Route::get('report/data/{begin}/{end}', 'ReportController@listData')->name('report.data');
 	Route::get('report/pdf/{begin}/{end}', 'ReportController@exportPDF');
+
 	Route::get('accounting-report', 'ReportController@reportAccounting')->name('accountingreports.index');
 	Route::post('accounting-report', 'ReportController@refreshAccounting')->name('accountingreports.refresh');
 	Route::get('accounting-report/data/{begin}/{end}/{division}/{payment}', 'ReportController@reportAccountingList')->name('accountingreports.data');
 	Route::get('accounting-report/pdf/{begin}/{end}/{division}/{payment}', 'ReportController@exportAccountingPDF')->name('accountingreports.pdf');
+	
+	Route::get('debit-report', 'ReportController@reportdebit')->name('debitreports.index');
+	Route::get('debit-report/data/{begin}/{end}/{division}/{member}', 'ReportController@reportDebitData')->name('debitreports.data');
+	Route::get('debit-report/pdf/{begin}/{end}/{division}/{member}', 'ReportController@exportPDFDebit')->name('debitreports.pdf');
 
 	Route::resource('setting', 'SettingController');
 
