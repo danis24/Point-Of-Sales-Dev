@@ -21,6 +21,7 @@
 								<th>Pelunasan</th>
 								<th>Sisa</th>
 								<th>Status</th>
+								<th>Option</th>
 							</tr>
 						</thead>
 						<tbody></tbody>

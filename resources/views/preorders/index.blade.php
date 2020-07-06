@@ -126,7 +126,7 @@ Pre Order
 					var id = $('#id').val();
 					if (save_method == "add") url = "{{route('preorders.store')}}";
 					else url = "{{url('preorders')}}/" + id;
-
+					$("#preOrderSave").prop("disabled", true);
 					$.ajax({
 						url: url,
 						type: "POST",
@@ -134,9 +134,11 @@ Pre Order
 						success: function (data) {
 							$('#modal-form').modal('hide');
 							table.ajax.reload();
+							$("#preOrderSave").prop("disabled", false);
 						},
 						error: function () {
 							alert("Tidak dapat menyimpan data");
+							$("#preOrderSave").prop("disabled", false);
 						}
 					});
 					return false;

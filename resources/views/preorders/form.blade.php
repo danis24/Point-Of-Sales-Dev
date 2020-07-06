@@ -61,7 +61,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">BATAL</button>
-                    <button type="submit" class="btn btn-primary">SIMPAN</button>
+                    <button type="submit" id="preOrderSave" class="btn btn-primary">SIMPAN</button>
                 </div>
             </form>
         </div>

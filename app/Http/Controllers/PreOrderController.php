@@ -232,16 +232,23 @@ class PreOrderController extends Controller
             }else{
                 $row[] = "<label class='badge badge-success'>Lunas</label>";
             }
+            $row[] = "<a href='https://api.whatsapp.com/send?phone=".$value->member->member_phone_number."&text=".$this->whatsAppDebitText($value, $repayment_count,$reminder)."' target='_blank' class='btn btn-success'><i class='fab fa-whatsapp'></i> Tagih Piutang </a>";
             $data[] = $row;
             $total_price_count += $total_price;
             $repayment_count_result += $repayment_count;
             $reminder_count += $reminder;
         }
         $data[] = [
-            "", "", "", "", "", "", "<b><h4>Rp. ".currency_format($total_price_count)."</h4></b>", "<b><h4>Rp. ".currency_format($repayment_count_result)."</h4></b>", "<b><h4>Rp. ".currency_format($reminder_count)."</h4></b>", ""
+            "", "", "", "", "", "", "<b><h4>Rp. ".currency_format($total_price_count)."</h4></b>", "<b><h4>Rp. ".currency_format($repayment_count_result)."</h4></b>", "<b><h4>Rp. ".currency_format($reminder_count)."</h4></b>", "", ""
         ];
         $output = array("data" => $data);
         return response()->json($output);
+    }
+
+    protected function whatsAppDebitText($data, $repayment_count, $reminder)
+    {
+        $text = "Halo Bpk/Ibu *".$data->member->member_name."* %0a%0a Berikut merupakan tagihan dengan rincian : %0a===================%0aTanggal PO: ".indo_date($data->date)."%0aDetail PO : ".$data->details."%0aQty: ".$data->qty."%0aHarga Satuan : Rp.".currency_format($data->price)."%0aTotal Harga : Rp.".currency_format($data->qty*$data->price)."%0a===================%0aSudah Di Bayar : Rp.".currency_format($repayment_count)."%0aSisa : Rp.".currency_format($reminder)."%0a%0aMohon Untuk Segera Dilunasi Secepatnya,%0a%0aSalam, %0a ERSO PRIDATAMA (DIVISI ".$data->division->name.")";
+        return $text;
     }
 
     public function store(Request $request)
