@@ -84,7 +84,7 @@ class ReportController extends Controller
 		$debit_data = [];
 		$total_price = 0;
 		$total_reminder = 0;
-		$no = 0;
+		$no = 1;
 		if($pre_orders->count() > 0){
 			foreach($pre_orders as $key => $value){
 				$repayments = Repayment::where("pre_order_id", $value->id)->get();
@@ -98,7 +98,7 @@ class ReportController extends Controller
 
 				if($reminder < ($value->qty*$value->price)){
 					$row = [];
-					$row[] = $no+1;
+					$row[] = $no++;
 					$row[] = indo_date($value->date, false);
 					$row[] = $value->division->name;
 					$row[] = $value->member->member_name;
