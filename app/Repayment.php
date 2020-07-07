@@ -12,7 +12,7 @@ class Repayment extends Model
 
     public function preOrder()
     {
-        return $this->belongsTo("App\PreOrder");
+        return $this->belongsTo("App\PreOrder", "pre_order_id");
     }
 
     public function division()
