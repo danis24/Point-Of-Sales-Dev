@@ -236,10 +236,10 @@ class PreOrderController extends Controller
             $row[] = "Rp.".currency_format($reminder);
             if($reminder > 0){
                 $row[] = "<label class='badge badge-danger'>Belum Lunas</label>";
-                $row[] = "";
+                $row[] = "<button onclick='sendWhatsapp(".$value->id.")' class='btn btn-success'><i class='fab fa-whatsapp'></i> Tagih Piutang </a>";
             }else{
                 $row[] = "<label class='badge badge-success'>Lunas</label>";
-                $row[] = "<button onclick='sendWhatsapp(".$value->id.")' class='btn btn-success'><i class='fab fa-whatsapp'></i> Tagih Piutang </a>";
+                $row[] = "";
             }
             $data[] = $row;
             $total_price_count += $total_price;
