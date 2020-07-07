@@ -3,9 +3,12 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class PreOrder extends Model
 {
+    use SoftDeletes;
+    
     protected $fillable = [
         "division_id", "date", "member_id", "details", "qty", "price", "down_payment"
     ];
