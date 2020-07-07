@@ -14,6 +14,7 @@ use App\PurchaseDetails;
 use App\PreOrder;
 use DB;
 use App\Member;
+use App\Credit;
 use PDF;
 
 class ReportController extends Controller
@@ -123,6 +124,7 @@ class ReportController extends Controller
 		$selling = $this->sellingDetail($begin, $end, $division, $payment);
 		$purchase = $this->purchaseDetail($begin, $end, $division, $payment);
 		$spending = $this->spendingDetail($begin, $end, $division, $payment);
+		$credit = $this->creditDetail($begin, $end, $division, $payment);
 		$repayment = $this->repaymentDetail($begin, $end, $division, $payment);
 		//Selling Data
 		$selling_data = [];
@@ -203,6 +205,26 @@ class ReportController extends Controller
 			}
 		}
 
+		//Credit
+		$credit_data = [];
+		if ($credit->count() > 0) {
+			foreach ($credit as $key => $value) {
+				$row = [];
+				$row[] = indo_date($value->created_at, false);
+				$row[] = $value->division->name;
+				if ($value->payment->type == "cash") {
+					$row[] = "CASH";
+				} else {
+					$row[] = $value->payment->bank_name . " - " . $value->payment->account_number . " - " . $value->payment->account_name;
+				}
+				$row[] = $value->description;
+				$row[] = $value->nominal;
+				$row[] = "";
+				$credit_data[] = $row;
+				$total_income += $value->nominal;
+			}
+		}
+
 		//Repayment
 		$repayment_data = [];
 		if ($repayment->count() > 0) {
@@ -222,7 +244,7 @@ class ReportController extends Controller
 				$total_income += $value->nominal;
 			}
 		}
-		$results = array_merge($selling_data, $purchase_data, $spending_data, $repayment_data);
+		$results = array_merge($selling_data, $purchase_data, $credit_data, $spending_data, $repayment_data);
 		$result_array = [];
 		$balance = 0;
 		foreach ($results as $key => $value) {
@@ -258,6 +280,18 @@ class ReportController extends Controller
 	public function spendingDetail($begin, $end, $division, $payment)
 	{
 		$spending = Spending::whereBetween('created_at', [$begin . " 00:00:00", $end . " 23:59:59"]);
+		if ($division != 0) {
+			$spending->where("division_id", $division);
+		}
+		if ($payment != 0) {
+			$spending->where("payment_id", $payment);
+		}
+		return $spending->get();
+	}
+
+	public function creditDetail($begin, $end, $division, $payment)
+	{
+		$spending = Credit::whereBetween('created_at', [$begin . " 00:00:00", $end . " 23:59:59"]);
 		if ($division != 0) {
 			$spending->where("division_id", $division);
 		}
@@ -313,6 +347,7 @@ class ReportController extends Controller
 		$result_purchase = 0;
 		$result_spending = 0;
 		$result_preorder = 0;
+		$result_credit = 0;
 		while (strtotime($begin) <= strtotime($end)) {
 			$date = $begin;
 			$begin = date('Y-m-d', strtotime("+1 day", strtotime($begin)));
@@ -320,12 +355,14 @@ class ReportController extends Controller
 			$total_selling = Selling::where('created_at', 'LIKE', "$date%")->sum('pay');
 			$total_purchase = Purchase::where('created_at', 'LIKE', "$date%")->sum('pay');
 			$total_spending = Spending::where('created_at', 'LIKE', "$date%")->sum('nominal');
+			$total_credit = Credit::where('created_at', 'LIKE', "$date%")->sum('nominal');
 			$total_preorder = Repayment::where('date', 'LIKE', "$date%")->sum('nominal');
-			$income = ($total_selling + $total_preorder) - $total_purchase - $total_spending;
+			$income = ($total_selling + $total_preorder + $total_credit) - $total_purchase - $total_spending;
 			$total_income += $income;
 			$result_selling += $total_selling;
 			$result_purchase += $total_purchase;
 			$result_spending += $total_spending;
+			$result_credit += $total_credit;
 			$result_preorder += $total_preorder;
 
 			$no++;
@@ -335,11 +372,12 @@ class ReportController extends Controller
 			$row[] = currency_format($total_selling);
 			$row[] = currency_format($total_preorder);
 			$row[] = currency_format($total_purchase);
+			$row[] = currency_format($total_credit);
 			$row[] = currency_format($total_spending);
 			$row[] = currency_format($income);
 			$data[] = $row;
 		}
-		$data[] = array("", "<b><h5>Jumlah<h5></b>", "<b>Rp. " . currency_format($result_selling) . "</b>", "<b>Rp. " . currency_format($result_preorder) . "</b>", "<b>Rp. " . currency_format($result_purchase) . "</b>", "<b>Rp. " . currency_format($result_spending) . "</b>", "<b><h5>Rp. " . currency_format($total_income) . "<h5></b>");
+		$data[] = array("", "<b>Jumlah</b>", "<b>Rp." . currency_format($result_selling) . "</b>", "<b>Rp." . currency_format($result_preorder) . "</b>", "<b>Rp." . currency_format($result_purchase) . "</b>", "<b>Rp." . currency_format($result_credit) . "</b>", "<b>Rp." . currency_format($result_spending) . "</b>", "<b>Rp." . currency_format($total_income) . "</b>");
 
 		return $data;
 	}
@@ -454,10 +492,11 @@ class ReportController extends Controller
             color: white;
           }
           table{
-            table-layout: fixed;
-            }
+			table-layout: fixed;
+			font-size: 12px;
+        	}
           </style>";
-		$output .= "<table class='vuln'><thead><tr><th width='8%'>No</th><th>Tanggal</th><th>Penjualan</th><th>Pre Order</th><th>Pembelian</th><th>Pengeluaran</th><th>Pendapatan</th></tr></thead><tbody>";
+		$output .= "<table class='vuln'><thead><tr><th width='8%'>No</th><th>Tanggal</th><th>Penjualan</th><th>Pre Order</th><th>Pembelian</th><th>Pemasukan</th><th>Pengeluaran</th><th>Pendapatan</th></tr></thead><tbody>";
 		foreach ($data as $key => $value) {
 			$output .= "<tr><td>" . $value[0] . "</td>";
 			$output .= "<td align='center'>" . $value[1] . "</td>";
@@ -466,6 +505,7 @@ class ReportController extends Controller
 			$output .= "<td align='center'>" . $value[4] . "</td>";
 			$output .= "<td align='center'>" . $value[5] . "</td>";
 			$output .= "<td align='center'>" . $value[6] . "</td>";
+			$output .= "<td align='center'>" . $value[7] . "</td>";
 			$output .= "</tr>";
 		}
 

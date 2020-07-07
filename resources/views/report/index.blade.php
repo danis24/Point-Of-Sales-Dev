@@ -29,6 +29,7 @@ Laporan Pendapatan {{ indo_date($begin, false) }} - {{ indo_date($end, false) }}
                 <th>Penjualan</th>
                 <th>Pre Order</th>
                 <th>Pembelian</th>
+                <th>Pemasukan Umum</th>
                 <th>Pengeluaran</th>
                 <th>Pendapatan</th>
               </tr>

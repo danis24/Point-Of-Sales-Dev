@@ -117,8 +117,14 @@
                   </a>
                 </li>
                 <li>
+                  <a class="nav-link" href="{{route('credits.index')}}">
+                    <i class="fas fa-download"></i>
+                    <span>Pemasukan</span>
+                  </a>
+                </li>
+                <li>
                   <a class="nav-link" href="{{route('spending.index')}}">
-                    <i class="fas fa-hand-holding-usd"></i>
+                    <i class="fas fa-upload"></i>
                     <span>Pengeluaran</span>
                   </a>
                 </li>

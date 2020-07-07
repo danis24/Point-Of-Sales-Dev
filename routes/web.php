@@ -79,8 +79,11 @@ Route::group(['middleware' => ['web', 'usercheck:1']], function(){
 	Route::post('member/print', 'MemberController@printCard');
 	Route::resource('member', 'MemberController');
 
-	Route::get('spending/data', 'SpendingController@listData')->name('spending.data');
+	Route::get('spending/data/{begin}/{end}/{division}/{payment}', 'SpendingController@listData')->name('spending.data');
 	Route::resource('spending', 'SpendingController');
+
+	Route::get('credits/data/{begin}/{end}/{division}/{payment}', 'CreditController@listData')->name('credits.data');
+	Route::resource('credits', 'CreditController');
 
 	Route::get('user/data', 'UserController@listData')->name('user.data');
 	Route::resource('user', 'UserController');

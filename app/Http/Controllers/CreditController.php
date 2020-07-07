@@ -1,15 +1,15 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\Spending;
+
 use Illuminate\Http\Request;
 use DataTables;
 use App\Division;
 use App\Payment;
+use App\Credit;
 
-class SpendingController extends Controller
+class CreditController extends Controller
 {
-
     protected $division;
     protected $payment;
 
@@ -27,28 +27,28 @@ class SpendingController extends Controller
 		$end = date('Y-m-d');
 		$division = 0;
 		$payment = 0;
-        return view('spending.index', compact('divisions', 'payments', 'begin', 'end', 'division', 'payment'));
+        return view('credit.index', compact('divisions', 'payments', 'begin', 'end', 'division', 'payment'));
     }
 
-    protected function getSpendingDetail($begin, $end, $division = 0, $payment = 0)
+    protected function getCreditDetail($begin, $end, $division = 0, $payment = 0)
     {
-        $spending = Spending::whereBetween('created_at', [$begin . " 00:00:00", $end . " 23:59:59"])->orderBy('spending_id', 'asc');
+        $credits = Credit::whereBetween('created_at', [$begin . " 00:00:00", $end . " 23:59:59"])->orderBy('id', 'asc');
         if($division != 0){
-            $spending->where("division_id", $division);
+            $credits->where("division_id", $division);
         }
 
         if($payment != 0){
-            $spending->where("payment_id", $division);
+            $credits->where("payment_id", $division);
         }
-        return $spending->get();
+        return $credits->get();
     }
 
     public function listData($begin, $end, $division, $payment){
-        $spending = $this->getSpendingDetail($begin, $end, $division, $payment);
+        $credits = $this->getCreditDetail($begin, $end, $division, $payment);
         $no = 0;
         $data = array();
         $nominal_count = 0;
-        foreach ($spending as $list) {
+        foreach ($credits as $list) {
             $no ++;
             $row = array();
             $row[] = $no;
@@ -59,7 +59,7 @@ class SpendingController extends Controller
             }else{
                 $row[] = $list->payment->bank_name." - ".$list->payment->account_number." - ".$list->payment->account_name;
             }
-            $row[] = $list->spending_type;
+            $row[] = $list->description;
             $row[] = "Rp. " . currency_format($list->nominal);
             $row[] = '<tr>
                      <div class="dropdown d-inline">
@@ -67,8 +67,8 @@ class SpendingController extends Controller
                         Aksi
                       </button>
                       <div class="dropdown-menu">
-                        <a onclick="editForm('.$list->spending_id.')" class="dropdown-item has-icon"><i class="fas fa-edit"></i>Edit Data</a>
-                        <a onclick="deleteData('.$list->spending_id.')" class="dropdown-item has-icon"><i class="fas fa-trash"></i>Hapus Data</a>
+                        <a onclick="editForm('.$list->id.')" class="dropdown-item has-icon"><i class="fas fa-edit"></i>Edit Data</a>
+                        <a onclick="deleteData('.$list->id.')" class="dropdown-item has-icon"><i class="fas fa-trash"></i>Hapus Data</a>
                       </div></tr>';
             $data[] = $row;
             $nominal_count += $list->nominal;
@@ -77,27 +77,27 @@ class SpendingController extends Controller
         return DataTables::of($data)->escapeColumns([])->make(true);
     }
     public function store(Request $request){
-        $spending = new Spending;
-        $spending->spending_type = $request['spending_type'];
-        $spending->nominal = $request['nominal'];
-        $spending->division_id = $request['division_id'];
-        $spending->payment_id = $request['payment_id'];
-        $spending->save();
+        $credit = new Credit;
+        $credit->description = $request['description'];
+        $credit->nominal = $request['nominal'];
+        $credit->division_id = $request['division_id'];
+        $credit->payment_id = $request['payment_id'];
+        $credit->save();
     }
     public function edit($id){
-        $spending = Spending::find($id);
-        echo json_encode($spending);
+        $credit = Credit::find($id);
+        echo json_encode($credit);
     }
     public function update(Request $request, $id){
-        $spending = Spending::find($id);
-        $spending->spending_type = $request['spending_type'];
-        $spending->nominal = $request['nominal'];
-        $spending->division_id = $request['division_id'];
-        $spending->payment_id = $request['payment_id'];
-        $spending->update();
+        $credit = Credit::find($id);
+        $credit->description = $request['description'];
+        $credit->nominal = $request['nominal'];
+        $credit->division_id = $request['division_id'];
+        $credit->payment_id = $request['payment_id'];
+        $credit->update();
     }
     public function destroy($id){
-        $spending = Spending::find($id);
+        $spending = Credit::find($id);
         $spending->delete();
     }
 }

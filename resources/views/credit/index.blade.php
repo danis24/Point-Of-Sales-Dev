@@ -1,11 +1,10 @@
 @extends('layouts.app')
 
 @section('content-header')
-	Pengeluaran
+	Pemasukan Umum
 @endsection
 
 @section('content')
-
 <div class="row">
 	<div class="col-12">
 		<div class="card">
@@ -93,7 +92,7 @@
   	<div class="dropdown d-inline">
       <button class="btn btn-primary" type="button" id="dropdownMenuButton2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-th-large"></i></button>
       <div class="dropdown-menu">
-      	<a class="dropdown-item has-icon" onclick="addForm()"><i class="fas fa-plus"></i>Tambah Pengeluaran</a>
+      	<a class="dropdown-item has-icon" onclick="addForm()"><i class="fas fa-plus"></i>Tambah Pemasukan</a>
       </div>
 </div>
   <div class="card-body">
@@ -119,29 +118,29 @@
 @endsection
 
 @section('script')
-@include('spending.form')
+@include('credit.form')
 <script type="text/javascript">
 	var table, save_method;
 	$(function(){
 		table = $('.table').DataTable({
 			"language": {
             	"url" : "{{asset('tables_indo.json')}}",
-			 },
+         	},
 			"dom": 'Brt',
 			"bSort": false,
 			"bPaginate": false,
 			"serverside": true,
 			"processing" : true,
 			"ajax" : {
-				"url"  : "{{url('spending/data')}}/{{$begin}}/{{$end}}/{{$division}}/{{$payment}}",
+				"url"  : "{{url('credits/data')}}/{{$begin}}/{{$end}}/{{$division}}/{{$payment}}",
 				"type" : "GET"
 			}
 		});
 		$('#modal-form form').validator().on('submit', function(e){
 			if(!e.isDefaultPrevented()){
 				var id = $('#id').val();
-				if(save_method == "add") url = "{{route('spending.store')}}";
-				else url = "spending/"+id;
+				if(save_method == "add") url = "{{route('credits.store')}}";
+				else url = "credits/"+id;
 
 				$.ajax({
 					url  	: url,
@@ -164,31 +163,32 @@
 			let end = $("#end").val();
 			let division = $("#division").val();
 			let payment = $("#payment").val();
-			table.ajax.url("{{url('spending/data')}}/"+begin+"/"+end+"/"+division+"/"+payment);
+			table.ajax.url("{{url('credits/data')}}/"+begin+"/"+end+"/"+division+"/"+payment);
 			table.ajax.reload();
 		});
+
 	});
 	function addForm(){
 		save_method = "add";
 		$('input[name=_method]').val('POST');
 		$('#modal-form').modal('show');
 		$('#modal-form form')[0].reset();
-		$('.modal-title').text('Tambah Pengeluaran');
+		$('.modal-title').text('Tambah Pemasukan');
 	}
 	function editForm(id){
 		save_method = "edit";
 		$('input[name=_method]').val('PATCH');
 		$('#modal-form form')[0].reset();
 		$.ajax({
-			url			: "spending/"+id+"/edit",
+			url			: "credits/"+id+"/edit",
 			type 		: "GET",
 			dataType	: "JSON",
 			success		: function(data){
 				$('#modal-form').modal('show');
-				$('.modal-title').text('Edit Pengeluaran');
+				$('.modal-title').text('Edit Pemasukan');
 
-				$('#id').val(data.spending_id);
-				$('#spending_type').val(data.spending_type);
+				$('#id').val(data.id);
+				$('#description').val(data.description);
 				$('#nominal').val(data.nominal);
 				$('#division_id').val(data.division_id);
 				$('#payment_id').val(data.payment_id);
@@ -202,7 +202,7 @@
 	function deleteData(id){
 		if(confirm("Apakah yakin data akan dihapus?")){
 			$.ajax({
-				url		: "spending/"+id,
+				url		: "credits/"+id,
 				type 	: "POST",
 				data 	: {'_method' : 'DELETE', '_token' : $('meta[name=csrf-token]').attr('content')},
 				success : function(data){
