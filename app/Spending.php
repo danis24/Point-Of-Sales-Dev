@@ -3,9 +3,12 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class Spending extends Model
 {
+    use LogsActivity;
+    
     protected $table = 'spending';
     protected $primaryKey = 'spending_id';
 
