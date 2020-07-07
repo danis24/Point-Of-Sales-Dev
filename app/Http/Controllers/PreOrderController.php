@@ -198,9 +198,14 @@ class PreOrderController extends Controller
         return response()->json($output);
     }
 
-    public function preOrderDetail($id)
+    public function preOrderDetail($id = 0, $member_id = 0)
     {
-        $preorders = $this->model->where("member_id", $id)->get();
+        if($member_id != 0){
+            $preorders = $this->model->where("member_id", $member_id)->get();
+        }
+        if($id != 0){
+            $preorders = $this->model->where("id", $id)->get();
+        }
         $no = 0;
         $data = array();
         $total_price_count = 0;
@@ -248,14 +253,14 @@ class PreOrderController extends Controller
 
     public function show($id)
     {
-        $data = $this->preOrderDetail($id);
+        $data = $this->preOrderDetail(0, $id);
         $output = array("data" => $data);
         return response()->json($output);
     }
 
     public function sendWhatsApp(Request $request)
     {
-        $data = $this->preOrderDetail($request->id);
+        $data = $this->preOrderDetail($request->id, 0);
         $payment = $this->payment->where("id", $request->payment_id)->first();
         $payment_type = "";
         if($payment->bank_name == ""){
