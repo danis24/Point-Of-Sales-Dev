@@ -215,8 +215,7 @@ class ReportController extends Controller
 				} else {
 					$row[] = $value->payment->bank_name . " - " . $value->payment->account_number . " - " . $value->payment->account_name;
 				}
-				// $row[] = "Pembayaran Pre Order Atas Nama " . $value->preOrder->member->member_name . " Detail : " . $value->preOrder->details . " [" . $value->details . "]";
-				$row[] = "";
+				$row[] = "Pembayaran Pre Order. Detail : " . $value->preOrder->details . " [" . $value->details . "]";
 				$row[] = $value->nominal;
 				$row[] = "";
 				$repayment_data[] = $row;
