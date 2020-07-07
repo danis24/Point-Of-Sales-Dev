@@ -15,6 +15,7 @@ use App\Repayment;
 use App\Spending;
 use App\Purchase;
 use App\Division;
+use App\Credit;
 use App\PreOrder;
 
 class HomeController extends Controller
@@ -66,8 +67,9 @@ class HomeController extends Controller
 		$debit_count = "Rp.".currency_format($selling_count+$repayment_count);
 
 		$spending_count = Spending::sum("nominal");
+		$credit_table_count = Credit::sum("nominal");
 		$purchase_count = Purchase::sum("pay");
-		$credit_count = "Rp.".currency_format($spending_count+$purchase_count);
+		$credit_count = "Rp.".currency_format($spending_count+$purchase_count+$credit_table_count);
 
 		$divisions = Division::all();
 		$balance = [];
@@ -76,8 +78,9 @@ class HomeController extends Controller
 				$selling_division = Selling::where("division_id", $value->id)->sum("pay");
 				$repayment_division = Repayment::where("division_id", $value->id)->sum("nominal");
 				$spending_division = Spending::where("division_id", $value->id)->sum("nominal");
+				$credit_division = Credit::where("division_id", $value->id)->sum("nominal");
 				$purchase_division = Purchase::where("division_id", $value->id)->sum("pay");
-				$division_balance = ($selling_division+$repayment_division)-($spending_division+$purchase_division);
+				$division_balance = ($selling_division+$repayment_division+$credit_division)-($spending_division+$purchase_division);
 				$balance[] = [
 					"division" => $value->name,
 					"division_balance" => "Rp.".currency_format($division_balance)
