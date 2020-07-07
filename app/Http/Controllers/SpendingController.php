@@ -82,6 +82,7 @@ class SpendingController extends Controller
         $spending->nominal = $request['nominal'];
         $spending->division_id = $request['division_id'];
         $spending->payment_id = $request['payment_id'];
+        $spending->created_at = $request['created_at'];
         $spending->save();
     }
     public function edit($id){
@@ -94,6 +95,7 @@ class SpendingController extends Controller
         $spending->nominal = $request['nominal'];
         $spending->division_id = $request['division_id'];
         $spending->payment_id = $request['payment_id'];
+        $spending->created_at = $request['created_at'];
         $spending->update();
     }
     public function destroy($id){

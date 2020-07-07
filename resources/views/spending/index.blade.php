@@ -188,6 +188,7 @@
 				$('.modal-title').text('Edit Pengeluaran');
 
 				$('#id').val(data.spending_id);
+				$('#created_at').val(data.created_at);
 				$('#spending_type').val(data.spending_type);
 				$('#nominal').val(data.nominal);
 				$('#division_id').val(data.division_id);

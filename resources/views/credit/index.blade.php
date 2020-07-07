@@ -188,6 +188,7 @@
 				$('.modal-title').text('Edit Pemasukan');
 
 				$('#id').val(data.id);
+				$('#created_at').val(data.created_at);
 				$('#description').val(data.description);
 				$('#nominal').val(data.nominal);
 				$('#division_id').val(data.division_id);

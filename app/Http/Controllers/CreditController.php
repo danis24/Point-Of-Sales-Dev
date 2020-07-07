@@ -82,6 +82,7 @@ class CreditController extends Controller
         $credit->nominal = $request['nominal'];
         $credit->division_id = $request['division_id'];
         $credit->payment_id = $request['payment_id'];
+        $credit->created_at = $request['created_at'];
         $credit->save();
     }
     public function edit($id){
@@ -94,6 +95,7 @@ class CreditController extends Controller
         $credit->nominal = $request['nominal'];
         $credit->division_id = $request['division_id'];
         $credit->payment_id = $request['payment_id'];
+        $credit->created_at = $request['created_at'];
         $credit->update();
     }
     public function destroy($id){

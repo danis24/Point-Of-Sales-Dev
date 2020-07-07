@@ -11,6 +11,13 @@
                     <input type="hidden" id="id" name="id">
                     <div class="form-group form-float">
                         <div class="form-line">
+                            <label class="form-label">Tanggal</label>
+                            <input type="date" class="form-control" id="created_at" name="created_at" value="{{date('Y-m-d')}}" autofocus
+                                required>
+                        </div>
+                    </div>
+                    <div class="form-group form-float">
+                        <div class="form-line">
                             <label class="form-label">Jenis Pengeluaran</label>
                             <input type="text" class="form-control" id="spending_type" name="spending_type" autofocus
                                 required>
