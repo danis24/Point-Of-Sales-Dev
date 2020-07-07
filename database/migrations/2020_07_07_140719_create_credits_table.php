@@ -16,7 +16,7 @@ class CreateCreditsTable extends Migration
         Schema::create('credits', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->text('description');
-            $table->bigInteger('nominal')->unsigned();
+            $table->float('nominal')->unsigned();
             $table->unsignedBigInteger('division_id');
             $table->unsignedBigInteger('payment_id');
             $table->timestamps();

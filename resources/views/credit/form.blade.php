@@ -19,7 +19,7 @@
                     <div class="form-group form-float">
                         <div class="form-line">
                             <label class="form-label">Nominal</label>
-                            <input type="text" class="form-control" id="nominal" name="nominal" autofocus required>
+                            <input type="number" step="any" class="form-control" id="nominal" name="nominal" autofocus required>
                         </div>
                     </div>
                     <div class="form-group form-float">
