@@ -64,12 +64,12 @@ class HomeController extends Controller
 
 		$selling_count = Selling::sum("pay");
 		$repayment_count = Repayment::sum("nominal");
-		$debit_count = "Rp.".currency_format($selling_count+$repayment_count);
+		$credit_table_count = Credit::sum("nominal");
+		$debit_count = "Rp.".currency_format($selling_count+$repayment_count+$credit_table_count);
 
 		$spending_count = Spending::sum("nominal");
-		$credit_table_count = Credit::sum("nominal");
 		$purchase_count = Purchase::sum("pay");
-		$credit_count = "Rp.".currency_format($spending_count+$purchase_count+$credit_table_count);
+		$credit_count = "Rp.".currency_format($spending_count+$purchase_count);
 
 		$divisions = Division::all();
 		$balance = [];
