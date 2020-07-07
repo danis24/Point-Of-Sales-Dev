@@ -274,7 +274,16 @@ class PreOrderController extends Controller
 
     protected function whatsAppDebitText($data, $payment_type)
     {
-        $text = "Halo Bpk/Ibu *".$data[0][3]."* %0a%0a Perkenalkan saya admin dari *ERSO PRIDATAMA* Divisi *".$data[0][2]."* menginformasikan perihal tagihan dengan rincian sebagai berikut : %0a===================%0aTanggal PO: ".$data[0][1]."%0aDetail PO : ".$data[0][5]."%0aQty: ".$data[0][6]."%0aHarga Satuan : ".$data[0][7]."%0aTotal Harga : ".$data[0][8]."%0a===================%0aSudah Di Bayar : ".$data[0][9]."%0aSisa Piutang : *".$data[0][10]."* %0a%0aTerimakasih atas perhatianya dan mohon untuk segera melakukan pembayaran ke rekening berikut ini : %0a".$payment_type."%0a%0aSegeralah konfirmasi jika sudah melakukan pembayaran%0a%0aSalam, %0a ERSO PRIDATAMA (DIVISI ".$data[0][2].")";
+        $price = "";
+        $qty = "";
+        if($data[0][2] == "MARKAS SUBLIM"){
+            $price = "Harga / Meter : ".$data[0][7];
+            $qty = "QTY : ".$data[0][6]." Meter";
+        }else{
+            $price = "Harga Satuan : ".$data[0][7];
+            $qty = "QTY : ".$data[0][6];
+        }
+        $text = "Halo Bpk/Ibu *".$data[0][3]."* %0a%0a Perkenalkan saya admin dari *ERSO PRIDATAMA* Divisi *".$data[0][2]."* menginformasikan perihal tagihan dengan rincian sebagai berikut : %0a===================%0aTanggal PO: ".$data[0][1]."%0aDetail : ".$data[0][5]."%0a".$qty."%0a".$price."%0aTotal Harga : ".$data[0][8]."%0a===================%0aSudah Di Bayar : ".$data[0][9]."%0aSisa Tagihan : *".$data[0][10]."* %0a%0aTerimakasih atas perhatianya dan mohon untuk segera melakukan pembayaran ke rekening berikut ini : %0a".$payment_type."%0a%0aSegeralah konfirmasi jika sudah melakukan pembayaran%0a%0aSalam, %0a ERSO PRIDATAMA (DIVISI ".$data[0][2].")";
         return $text;
     }
 
