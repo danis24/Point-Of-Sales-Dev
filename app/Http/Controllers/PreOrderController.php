@@ -332,6 +332,7 @@ class PreOrderController extends Controller
     {
         $preorder = $this->model->destroy($id);
         if($preorder){
+            $this->repayment->where("pre_order_id", $id)->delete();
             return response()->json([
                 "status" => "success"
             ]);
