@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 use App\Member;
+use App\Payment;
 use PDF;
 use Illuminate\Http\Request;
 
@@ -13,7 +14,8 @@ class MemberController extends Controller
     }
 
     public function index(){
-        return view('member.index');
+        $payments = Payment::all();
+        return view('member.index', compact('payments'));
     }
 
     public function listData(){

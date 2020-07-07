@@ -13,7 +13,9 @@
 							<tr>
 								<th width="30">No</th>
 								<th>Tanggal</th>
+								<th>Divisi</th>
 								<th>Nama</th>
+								<th>Nomor WA/HP</th>
 								<th>Rincian</th>
 								<th>Qty</th>
 								<th>Harga</th>

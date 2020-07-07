@@ -59,6 +59,7 @@ Route::group(['middleware' => ['web', 'usercheck:1']], function(){
 
 	Route::get('preorders/data/{begin}/{end}/{division}', 'PreOrderController@listData')->name('preorders.data');
 	Route::get('preorders/report/{begin}/{end}/{division}', 'PreOrderController@report')->name('preorders.report');
+	Route::post('preoders/send', 'PreOrderController@sendWhatsApp')->name('preorders.send');
 	Route::resource('preorders', 'PreOrderController');
 	Route::get('preorders/{id}/show', 'PreOrderController@show')->name('preorders.show');
 

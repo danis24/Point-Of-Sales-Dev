@@ -198,7 +198,7 @@ class PreOrderController extends Controller
         return response()->json($output);
     }
 
-    public function show($id)
+    public function preOrderDetail($id)
     {
         $preorders = $this->model->where("member_id", $id)->get();
         $no = 0;
@@ -220,7 +220,9 @@ class PreOrderController extends Controller
             $row = array();
             $row[] = $no;
             $row[] = indo_date($value->date, false);
+            $row[] = $value->division->name;
             $row[] = $value->member->member_name;
+            $row[] = $value->member->member_phone_number;
             $row[] = $value->details;
             $row[] = $value->qty;
             $row[] = "Rp.".currency_format($value->price);
@@ -232,22 +234,42 @@ class PreOrderController extends Controller
             }else{
                 $row[] = "<label class='badge badge-success'>Lunas</label>";
             }
-            $row[] = "<a href='https://api.whatsapp.com/send?phone=".$value->member->member_phone_number."&text=".$this->whatsAppDebitText($value, $repayment_count,$reminder)."' target='_blank' class='btn btn-success'><i class='fab fa-whatsapp'></i> Tagih Piutang </a>";
+            $row[] = "<button onclick='sendWhatsapp(".$value->id.")' class='btn btn-success'><i class='fab fa-whatsapp'></i> Tagih Piutang </a>";
             $data[] = $row;
             $total_price_count += $total_price;
             $repayment_count_result += $repayment_count;
             $reminder_count += $reminder;
         }
         $data[] = [
-            "", "", "", "", "", "", "<b><h4>Rp. ".currency_format($total_price_count)."</h4></b>", "<b><h4>Rp. ".currency_format($repayment_count_result)."</h4></b>", "<b><h4>Rp. ".currency_format($reminder_count)."</h4></b>", "", ""
+            "", "", "", "", "", "", "","", "<b><h4>Rp. ".currency_format($total_price_count)."</h4></b>", "<b><h4>Rp. ".currency_format($repayment_count_result)."</h4></b>", "<b><h4>Rp. ".currency_format($reminder_count)."</h4></b>", "", ""
         ];
+        return $data;
+    }
+
+    public function show($id)
+    {
+        $data = $this->preOrderDetail($id);
         $output = array("data" => $data);
         return response()->json($output);
     }
 
-    protected function whatsAppDebitText($data, $repayment_count, $reminder)
+    public function sendWhatsApp(Request $request)
     {
-        $text = "Halo Bpk/Ibu *".$data->member->member_name."* %0a%0a Berikut merupakan tagihan dengan rincian : %0a===================%0aTanggal PO: ".indo_date($data->date)."%0aDetail PO : ".$data->details."%0aQty: ".$data->qty."%0aHarga Satuan : Rp.".currency_format($data->price)."%0aTotal Harga : Rp.".currency_format($data->qty*$data->price)."%0a===================%0aSudah Di Bayar : Rp.".currency_format($repayment_count)."%0aSisa : Rp.".currency_format($reminder)."%0a%0aMohon segera melakukan pembayaran,%0a%0aSalam, %0a ERSO PRIDATAMA (DIVISI ".$data->division->name.")";
+        $data = $this->preOrderDetail($request->id);
+        $payment = $this->payment->where("id", $request->payment_id)->first();
+        $payment_type = "";
+        if($payment->bank_name == ""){
+            $payment_type = "CASH";
+        }else{
+            $payment_type = $payment->bank_name."%0a No Rek : ".$payment->account_number."%0a A/N ".$payment->account_name;
+        }
+        $link = "https://api.whatsapp.com/send?phone=".$data[0][4]."&text=".$this->whatsAppDebitText($data, $payment_type);
+        return redirect($link);
+    }
+
+    protected function whatsAppDebitText($data, $payment_type)
+    {
+        $text = "Halo Bpk/Ibu *".$data[0][3]."* %0a%0a Perkenalkan saya admin dari *ERSO PRIDATAMA* Divisi *".$data[0][2]."* menginformasikan perihal tagihan dengan rincian sebagai berikut : %0a===================%0aTanggal PO: ".$data[0][1]."%0aDetail PO : ".$data[0][5]."%0aQty: ".$data[0][6]."%0aHarga Satuan : ".$data[0][7]."%0aTotal Harga : ".$data[0][8]."%0a===================%0aSudah Di Bayar : ".$data[0][9]."%0aSisa Piutang : *".$data[0][10]."* %0a%0aTerimakasih atas perhatianya dan mohon untuk segera melakukan pembayaran ke rekening berikut ini : %0a".$payment_type."%0a%0aSegeralah konfirmasi jika sudah melakukan pembayaran%0a%0aSalam, %0a ERSO PRIDATAMA (DIVISI ".$data[0][2].")";
         return $text;
     }
 

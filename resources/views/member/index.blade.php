@@ -47,6 +47,7 @@
 @section('script')
 @include('member.form')
 @include('member.preorderdetail')
+@include('member.whatsapp')
 <script type="text/javascript">
 	var table, save_method, table1;
 	$(function(){
@@ -114,6 +115,11 @@
 			}
 		});
 	});
+
+	function sendWhatsapp(id){
+		$('#modal-whatsapp').modal('show');
+		$('#pre_order_id').val(id);
+	}
 
 	function showDetail(id){
 		$('#modal-detail').modal('show');
