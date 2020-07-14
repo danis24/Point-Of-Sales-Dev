@@ -28,6 +28,7 @@ Penjualan
                             <th>Tanggal</th>
                             <th>Divisi</th>
                             <th>Member</th>
+                            <th>Detail Produk</th>
                             <th>Total Item</th>
                             <th>Total Harga</th>
                             <th>Diskon</th>

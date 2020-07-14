@@ -25,11 +25,18 @@ class SellingController extends Controller
     public function index(){
         return view('selling.index');
     }
+
     public function listData(){
         $selling = Selling::join('users', 'users.id', '=', 'selling.users_id')->join('divisions', 'divisions.id', '=', 'selling.division_id')->join('payments', 'payments.id', '=', 'selling.payment_id')->select('users.*', 'selling.*', 'divisions.name as division_name', 'payments.type as payment_type', 'payments.bank_name as payment_bank_name', 'payments.account_number as payment_account_number', 'payments.account_name as payment_account_name', 'selling.created_at as date')->orderBy('selling.selling_id', 'desc')->get();
         $no = 0;
         $data = array();
         foreach ($selling as $list) {
+            $sellingDetails = $this->sellingDetail($list->selling_id);
+            $products = "<ul>";
+            foreach($sellingDetails as $key => $value){
+                $products .= "<li>".$value[2]." (".$value[3]." = ".$value[4].") </li>";
+            }
+            $products .= "</ul>";
             $no ++;
             $row = array();
             $row[] = $no;
@@ -40,6 +47,7 @@ class SellingController extends Controller
             }else{
                 $row[] = $list->member_code;
             }
+            $row[] = $products;
             $row[] = $list->total_item;
             $row[] = "Rp. ".currency_format($list->total_price);
             $row[] = $list->discount."%";
@@ -64,7 +72,9 @@ class SellingController extends Controller
         $output = array("data" => $data);
         return response()->json($output);
     }
-    public function show($id){
+
+    public function sellingDetail($id)
+    {
         $detail = SellingDetails::leftJoin('product', 'product.product_code', '=', 'selling_details.product_code')->where('selling_id', '=', $id)->get();
         $no = 0;
         $data = array();
@@ -79,9 +89,15 @@ class SellingController extends Controller
             $row[] = "Rp. ".currency_format($list->sub_total);
             $data[] = $row;
         }
+        return $data;
+    }
+
+    public function show($id){
+        $data = $this->sellingDetail($id);
         $output = array("data" => $data);
         return response()->json($output);
     }
+    
     public function destroy($id){
         $selling = Selling::find($id);
         $selling->delete();
