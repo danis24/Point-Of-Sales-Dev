@@ -3,7 +3,7 @@
 <head>
 	<title>Cetak Barcode</title>
 	<style>
-		@page { margin-top: 5mm; margin-left: 1mm}
+		@page { margin-top: 5mm; margin-bottom: 5mm;; margin-left: 1mm}
 		body { margin: 0px; }
 	</style>
 </head>

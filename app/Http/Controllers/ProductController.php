@@ -131,7 +131,7 @@ class ProductController extends Controller
 		}
     	$no = 1;
     	$pdf = PDF::loadView('product.barcode', compact('data_product', 'no'));
-    	$pdf->setPaper('b5', 'landscape');
+    	$pdf->setPaper([0,0,575.433,470.551], 'portrait');
     	return $pdf->stream();
 	}
 
