@@ -9,6 +9,7 @@ use App\Unit;
 use DataTables;
 use PDF;
 use DNS2D;
+use DNS1D;
 use App\Stock;
 
 class ProductController extends Controller
@@ -124,7 +125,7 @@ class ProductController extends Controller
 					"product_name" => $product->product_name,
 					"selling_price" => $product->selling_price,
 					"product_code" => $product_code,
-					"QRCode" => DNS2D::getBarcodePNG((string)$product_code, 'QRCODE')
+					"barcode" => DNS1D::getBarcodePNG($product_code, "C128", 1,30)
 				];
         	}
 		}

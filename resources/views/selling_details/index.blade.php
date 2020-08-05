@@ -5,7 +5,7 @@ Detail Penjualan
 @endsection
 
 @section('content')
-<div class="card">
+<!-- <div class="card">
   <div class="card-body">
     <h3>QR CODE SCANNER</h3>
       <hr>
@@ -17,7 +17,7 @@ Detail Penjualan
       <canvas></canvas>
       <hr>
   </div>
-</div>
+</div> -->
 <div class="card">
   <div class="card-body">
     <form class="form form-horizontal form-product" method="post">
@@ -161,8 +161,8 @@ Detail Penjualan
 
 @include('selling_details.product')
 @include('selling_details.member')
-<script src="{{asset('stisla/js/qrcodelib.js')}}"></script>
-<script src="{{asset('stisla/js/webcodecamjs.js')}}"></script>
+<!-- <script src="{{asset('stisla/js/qrcodelib.js')}}"></script>
+<script src="{{asset('stisla/js/webcodecamjs.js')}}"></script> -->
 <script type="text/javascript">
   var txt = "innerText" in HTMLElement.prototype ? "innerText" : "textContent";
   var arg = {
@@ -174,31 +174,31 @@ Detail Penjualan
           }
       }
   };
-  var decoder = new WebCodeCamJS("canvas").buildSelectMenu('#camera-select', 'environment|back').init(arg);
-  $("#play").click(function () {
-    if (decoder.isInitialized()) {
-      decoder.play();
-      console.log("Play");
-    }
-  });
-  $("#stop").click(function () {
-    if (decoder.isInitialized()) {
-      decoder.stop();
-      console.log("Stop");
-    }
-  });
-  $("#pause").click(function () {
-    if (decoder.isInitialized()) {
-      decoder.pause();
-      console.log("Pause");
-    }
-  });
-  $("#camera-select").change(function () {
-    if (decoder.isInitialized()) {
-      decoder.stop().play();
-      console.log("Change");
-    }
-  });
+  // var decoder = new WebCodeCamJS("canvas").buildSelectMenu('#camera-select', 'environment|back').init(arg);
+  // $("#play").click(function () {
+  //   if (decoder.isInitialized()) {
+  //     decoder.play();
+  //     console.log("Play");
+  //   }
+  // });
+  // $("#stop").click(function () {
+  //   if (decoder.isInitialized()) {
+  //     decoder.stop();
+  //     console.log("Stop");
+  //   }
+  // });
+  // $("#pause").click(function () {
+  //   if (decoder.isInitialized()) {
+  //     decoder.pause();
+  //     console.log("Pause");
+  //   }
+  // });
+  // $("#camera-select").change(function () {
+  //   if (decoder.isInitialized()) {
+  //     decoder.stop().play();
+  //     console.log("Change");
+  //   }
+  // });
   
   var table;
   $(function () {

@@ -8,10 +8,11 @@
 		<tr>
 			@foreach($data_product as $data)
 			<td align="center" style="border: 1px solid #ccc">
-				<span>{{$data['product_name']}} - Rp. {{currency_format($data['selling_price'])}}</span><br>
-				<img src="data:image/png;base64,{{$data['QRCode']}}" height="180" width="180">
+				<span style="font-size: 8">{{$data['product_name']}}</span><br>
+				<img src="data:image/png;base64,{{$data['barcode']}}" alt="barcode"/><br>
+				<span style="font-size: 8">{{$data['product_code']}}</span>
 			</td>
-			@if($no++ % 3 == 0)
+			@if($no++ % 5 == 0)
 		</tr>
 		<tr>
 			@endif

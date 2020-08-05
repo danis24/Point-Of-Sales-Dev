@@ -92,12 +92,12 @@
             <li class="dropdown">
               <a href="#" class="nav-link has-dropdown"><i class="fas fa-hand-holding-usd"></i><span>Akunting</span></a>
               <ul class="dropdown-menu" style="display: none;">
-                <li>
+                <!-- <li>
                   <a class="nav-link" href="{{route('supplier.index')}}">
                     <i class="fas fa-dolly-flatbed"></i>
                     <span>Supplier</span>
                   </a>
-                </li>
+                </li> -->
                 <li>
                   <a class="nav-link" href="{{ route('divisions.index') }}">
                     <i class="fas fa-boxes"></i>
@@ -110,12 +110,12 @@
                     <span>Jenis Pembayaran</span>
                   </a>
                 </li>
-                <li>
+                <!-- <li>
                   <a class="nav-link" href="{{route('purchase.index')}}">
                     <i class="fas fa-shopping-cart"></i>
                     <span>Pembelian</span>
                   </a>
-                </li>
+                </li> -->
                 <li>
                   <a class="nav-link" href="{{route('credits.index')}}">
                     <i class="fas fa-download"></i>
