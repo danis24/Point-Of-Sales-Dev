@@ -61,15 +61,30 @@ class HomeController extends Controller
 		$product = Product::count();
 		$supplier = Supplier::count();
 		$member = Member::count();
-
+		
+		//Sum All
 		$selling_count = Selling::sum("pay");
 		$repayment_count = Repayment::sum("nominal");
 		$credit_table_count = Credit::sum("nominal");
-		$debit_count = "Rp.".currency_format($selling_count+$repayment_count+$credit_table_count);
 
+		//sum permonth
+		$selling_count_month = Selling::whereBetween('created_at', [$begin . " 00:00:00", $end . " 23:59:59"])->sum("pay");
+		$repayment_count_month = Repayment::whereBetween('date', [$begin . " 00:00:00", $end . " 23:59:59"])->sum("nominal");
+		$credit_table_count_month = Credit::whereBetween('created_at', [$begin . " 00:00:00", $end . " 23:59:59"])->sum("nominal");
+
+		$debit_count = "Rp.".currency_format($selling_count+$repayment_count+$credit_table_count);
+		$debit_count_month = "Rp.".currency_format($selling_count_month+$repayment_count_month+$credit_table_count_month);
+
+		//Sum All
 		$spending_count = Spending::sum("nominal");
 		$purchase_count = Purchase::sum("pay");
+
+		//Sum Per month
+		$spending_count_month = Spending::whereBetween('created_at', [$begin . " 00:00:00", $end . " 23:59:59"])->sum("nominal");
+		$purchase_count_month = Purchase::whereBetween('created_at', [$begin . " 00:00:00", $end . " 23:59:59"])->sum("pay");
+
 		$credit_count = "Rp.".currency_format($spending_count+$purchase_count);
+		$credit_count_month = "Rp.".currency_format($spending_count_month+$purchase_count_month);
 
 		$divisions = Division::all();
 		$balance = [];
@@ -80,9 +95,21 @@ class HomeController extends Controller
 				$spending_division = Spending::where("division_id", $value->id)->sum("nominal");
 				$credit_division = Credit::where("division_id", $value->id)->sum("nominal");
 				$purchase_division = Purchase::where("division_id", $value->id)->sum("pay");
+				//where month
+				$selling_division_month = Selling::where("division_id", $value->id)->whereBetween('created_at', [$begin . " 00:00:00", $end . " 23:59:59"])->sum("pay");
+				$repayment_division_month = Repayment::where("division_id", $value->id)->whereBetween('date', [$begin . " 00:00:00", $end . " 23:59:59"])->sum("nominal");
+				$spending_division_month = Spending::where("division_id", $value->id)->whereBetween('created_at', [$begin . " 00:00:00", $end . " 23:59:59"])->sum("nominal");
+				$credit_division_month = Credit::where("division_id", $value->id)->whereBetween('created_at', [$begin . " 00:00:00", $end . " 23:59:59"])->sum("nominal");
+				$purchase_division_month = Purchase::where("division_id", $value->id)->whereBetween('created_at', [$begin . " 00:00:00", $end . " 23:59:59"])->sum("pay");
+
+
 				$division_balance = ($selling_division+$repayment_division+$credit_division)-($spending_division+$purchase_division);
 				$balance[] = [
 					"division" => $value->name,
+					"debit" => "Rp.".currency_format($selling_division+$repayment_division+$credit_division),
+					"debit_month" => "Rp.".currency_format($selling_division_month+$repayment_division_month+$credit_division_month),
+					"credit" => "Rp.".currency_format($spending_division+$purchase_division),
+					"credit_month" => "Rp.".currency_format($spending_division_month+$purchase_division_month),
 					"division_balance" => "Rp.".currency_format($division_balance)
 				];
 			}
@@ -112,7 +139,7 @@ class HomeController extends Controller
 		$sortDebt = collect($topDebt)->sortBy("reminder")->reverse()->toArray();
 
 		if (Auth::user()->level == 1)
-			return view('home.admin', compact('category', 'product', 'supplier', 'member', 'begin', 'end', 'data_income', 'data_income_preorder', 'data_date', 'debit_count', 'credit_count', 'balance', 'sortDebt'));
+			return view('home.admin', compact('category', 'product', 'supplier', 'member', 'begin', 'end', 'data_income', 'data_income_preorder', 'data_date', 'debit_count', 'credit_count', 'balance', 'sortDebt', 'debit_count_month', 'credit_count_month'));
 		else
 			return view('home.cashier', compact('setting'));
 	}

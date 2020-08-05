@@ -76,6 +76,28 @@
                         <div class="text-muted">Saldo</div>
                         <h4>{{$value['division_balance']}}</h4>
                     </div>
+                    <br>
+                    <div class="summary-info">
+                        <p>
+                            <i class="fas fa-boxes"></i> Pemasukan :
+                            <b>{{ $value['debit'] }}</b>
+                        </p>
+                        <p>
+                            <i class="fas fa-box"></i> Pengeluaran :
+                            <b>{{ $value['credit'] }}</b>
+                        </p>
+                    </div>
+                    <br>
+                    <div class="summary-info">
+                        <p>
+                            <i class="fas fa-boxes"></i> Pemasukan/Bulan :
+                            <b>{{ $value['debit_month'] }}</b>
+                        </p>
+                        <p>
+                            <i class="fas fa-box"></i> Pengeluaran/Bulan :
+                            <b>{{ $value['credit_month'] }}</b>
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -85,31 +107,69 @@
 </div>
 
 <div class="row">
-    <div class="col-lg-6 col-md-6 col-sm-6 col-12">
-        <div class="card card-statistic-1">
-            <div class="card-icon bg-primary">
-                <i class="fas fa-boxes"></i>
-            </div>
-            <div class="card-wrap">
-                <div class="card-header">
-                    <h4>Total Pemasukan</h4>
+    <div class="col-lg-6 col-md-6 col-sm-6 col-12 card card-statistic-1">
+        <div class="card-header">
+        Pemasukan dan Pengeluaran Keseluruhan
+        </div>
+        <div class="card-body">
+            <div class="card card-statistic-1">
+                <div class="card-icon bg-primary">
+                    <i class="fas fa-boxes"></i>
+                </div>
+                <div class="card-wrap">
+                    <div class="card-header">
+                        <h4>Total Pemasukan</h4>
+                    </div>
+                </div>
+                <div class="card-body">
+                    {{ $debit_count }}
                 </div>
             </div>
-            <div class="card-body">
-                {{ $debit_count }}
+            <div class="card card-statistic-1">
+                <div class="card-icon bg-primary">
+                    <i class="fas fa-box"></i>
+                </div>
+                <div class="card-wrap">
+                    <div class="card-header">
+                        <h4>Total Pengeluaran</h4>
+                    </div>
+                </div>
+                <div class="card-body">
+                    {{ $credit_count }}
+                </div>
             </div>
         </div>
-        <div class="card card-statistic-1">
-            <div class="card-icon bg-primary">
-                <i class="fas fa-box"></i>
-            </div>
-            <div class="card-wrap">
-                <div class="card-header">
-                    <h4>Total Pengeluaran</h4>
+    </div>
+    <div class="col-lg-6 col-md-6 col-sm-6 col-12 card card-statistic-1">
+        <div class="card-header">
+        Pemasukan dan Pengeluaran {{ indo_date($begin) }} s/d {{ indo_date($end) }}
+        </div>
+        <div class="card-body">
+            <div class="card card-statistic-1">
+                <div class="card-icon bg-primary">
+                    <i class="fas fa-boxes"></i>
+                </div>
+                <div class="card-wrap">
+                    <div class="card-header">
+                        <h4>Total Pemasukan</h4>
+                    </div>
+                </div>
+                <div class="card-body">
+                    {{ $debit_count_month }}
                 </div>
             </div>
-            <div class="card-body">
-                {{ $credit_count }}
+            <div class="card card-statistic-1">
+                <div class="card-icon bg-primary">
+                    <i class="fas fa-box"></i>
+                </div>
+                <div class="card-wrap">
+                    <div class="card-header">
+                        <h4>Total Pengeluaran</h4>
+                    </div>
+                </div>
+                <div class="card-body">
+                    {{ $credit_count_month }}
+                </div>
             </div>
         </div>
     </div>
