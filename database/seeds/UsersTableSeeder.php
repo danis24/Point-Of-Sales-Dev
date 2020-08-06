@@ -24,7 +24,7 @@ class UsersTableSeeder extends Seeder
         		'email'		=>	'danis@erso-pridatama.com',
         		'password'	=>	bcrypt('Suckhack24@'),
         		'photos'	=>	'lendis.jpg',
-        		'level'		=>	1
+        		'level'		=>	0
         	],
         	[
         		'name'		=>	'Atiya',
@@ -32,6 +32,13 @@ class UsersTableSeeder extends Seeder
         		'password'	=>	bcrypt('zabuza71'),
         		'photos'	=>	'avatar.png',
         		'level'		=>	2
+			],
+			[
+        		'name'		=>	'LEON',
+        		'email'		=>	'leon@erso-pridatama.com',
+        		'password'	=>	bcrypt('zabuza71'),
+        		'photos'	=>	'avatar.png',
+        		'level'		=>	3
         	]
         ));
     }

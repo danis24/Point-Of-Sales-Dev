@@ -32,7 +32,9 @@ Laporan Keuangan
 							<div class="form-group">
 								<label for="">Divisi</label>
 								<select name="division" class="form-control">
+									@if(Auth::user()->level != 3)
 									<option value="0">Semua</option>
+									@endif
 									@if($divisions->count() > 0)
 									@foreach($divisions as $key => $value)
 									@if($division == $value->id)
@@ -50,26 +52,28 @@ Laporan Keuangan
 								<label for="">Jenis Keuangan</label>
 								<select name="payment" class="form-control">
 								<option value="0">Semua</option>
-								@if($payments->count() > 0)
-								@foreach($payments as $key => $value)
-								@if($payment == $value->id)
-								<option value="{{ $value->id }}" selected>
-									@if($value->bank_name == "")
-									CASH
+								@if(Auth::user()->level != 3)
+									@if($payments->count() > 0)
+									@foreach($payments as $key => $value)
+									@if($payment == $value->id)
+									<option value="{{ $value->id }}" selected>
+										@if($value->bank_name == "")
+										CASH
+										@else
+										{{$value->bank_name}} - {{$value->account_number}} - {{$value->account_name}}
+										@endif
+									</option>
 									@else
-									{{$value->bank_name}} - {{$value->account_number}} - {{$value->account_name}}
+									<option value="{{ $value->id }}">
+										@if($value->bank_name == "")
+										CASH
+										@else
+										{{$value->bank_name}} - {{$value->account_number}} - {{$value->account_name}}
+										@endif
+									</option>
 									@endif
-								</option>
-								@else
-								<option value="{{ $value->id }}">
-									@if($value->bank_name == "")
-									CASH
-									@else
-									{{$value->bank_name}} - {{$value->account_number}} - {{$value->account_name}}
+									@endforeach
 									@endif
-								</option>
-								@endif
-								@endforeach
 								@endif
 							</select>
 							</div>

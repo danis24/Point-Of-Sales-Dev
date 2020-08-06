@@ -34,7 +34,12 @@ class ReportController extends Controller
 
 	public function reportAccounting()
 	{
-		$divisions = Division::all();
+		$user = \Auth::user();
+		if($user->level == 3){
+			$divisions = Division::where("id", $user->division_id)->get();
+		}else{
+			$divisions = Division::all();
+		}
 		$payments = Payment::all();
 		$begin = date('Y-m-d', mktime(0, 0, 0, date('m'), 1, date('Y')));
 		$end = date('Y-m-d');
@@ -67,6 +72,10 @@ class ReportController extends Controller
 
 	public function reportAccountingList($begin, $end, $division, $payment)
 	{
+		$user = \Auth::user();
+		if($user->level == 3){
+			$division = $user->division_id;
+		}
 		$data = $this->reportAccountingData($begin, $end, $division, $payment);
 		$output = array("data" => $data);
 		return response()->json($output);

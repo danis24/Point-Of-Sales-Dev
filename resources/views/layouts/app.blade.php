@@ -33,17 +33,6 @@
             <li><a href="#" data-toggle="search" class="nav-link nav-link-lg d-sm-none"><i
                   class="fas fa-search"></i></a></li>
           </ul>
-          <div class="search-element">
-            <input class="form-control" type="search" placeholder="Pencarian" aria-label="Search" data-width="250">
-            <button class="btn" type="submit"><i class="fas fa-search"></i></button>
-            <div class="search-backdrop"></div>
-            <div class="search-result">
-              <div class="search-item">
-                <a href="#">Kolom pencarian ini hanya hiasan, jangan berharap lebih :(</a>
-                <a href="#" class="search-close"><i class="fas fa-times"></i></a>
-              </div>
-            </div>
-          </div>
         </form>
         <ul class="navbar-nav navbar-right">
           <li class="dropdown"><a href="#" data-toggle="dropdown"
@@ -232,6 +221,18 @@
                   </a>
                 </li>
               </ul>
+            </li>
+            @endif
+            @if(Auth::user()->level==3)
+            <li class="dropdown">
+              <a href="#" class="nav-link has-dropdown"><i class="fas fa-print"></i><span>Laporan</span></a>
+              <ul class="dropdown-menu" style="display: none;">
+                <li>
+                  <a class="nav-link" href="{{ route('accountingreports.index') }}">
+                    <i class="fas fa-hand-holding-usd"></i>
+                    <span>Keuangan</span>
+                  </a>
+                </li>
             </li>
             @endif
             @if(Auth::user()->level==2)

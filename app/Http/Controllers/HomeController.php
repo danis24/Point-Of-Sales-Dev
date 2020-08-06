@@ -86,7 +86,12 @@ class HomeController extends Controller
 		$credit_count = "Rp.".currency_format($spending_count+$purchase_count);
 		$credit_count_month = "Rp.".currency_format($spending_count_month+$purchase_count_month);
 
-		$divisions = Division::all();
+		$user = Auth::user();
+		if($user->level == 3 ){
+			$divisions = Division::where("id", $user->division_id)->get();
+		}else{
+			$divisions = Division::all();
+		}
 		$balance = [];
 		if($divisions->count() > 0){
 			foreach($divisions as $key => $value){
@@ -140,6 +145,8 @@ class HomeController extends Controller
 
 		if (Auth::user()->level == 1)
 			return view('home.admin', compact('category', 'product', 'supplier', 'member', 'begin', 'end', 'data_income', 'data_income_preorder', 'data_date', 'debit_count', 'credit_count', 'balance', 'sortDebt', 'debit_count_month', 'credit_count_month'));
+		elseif(Auth::user()->level == 3)
+			return view('home.investor', compact('balance'));
 		else
 			return view('home.cashier', compact('setting'));
 	}

@@ -128,6 +128,12 @@ Route::group(['middleware' => ['web', 'usercheck:1']], function(){
 });
 
 Route::group(['middleware' => 'web'], function(){
+	Route::get('accounting-report', 'ReportController@reportAccounting')->name('accountingreports.index');
+	Route::post('accounting-report', 'ReportController@refreshAccounting')->name('accountingreports.refresh');
+	Route::get('accounting-report/data/{begin}/{end}/{division}/{payment}', 'ReportController@reportAccountingList')->name('accountingreports.data');
+	Route::get('accounting-report/pdf/{begin}/{end}/{division}/{payment}', 'ReportController@exportAccountingPDF')->name('accountingreports.pdf');
+
+
 	Route::get('user/profile', 'UserController@show')->name('user.profile');
 	Route::patch('user/{id}/change', 'UserController@changeProfile');
 
