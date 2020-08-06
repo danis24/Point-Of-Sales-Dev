@@ -146,15 +146,15 @@ class PreOrderController extends Controller
         $count_reminder = 0;
 
         foreach ($preorders as $key => $value) {
-            $repayments = $this->repayment->where("pre_order_id", $value->id)->get();
+            $repayments = $this->repayment->where("pre_order_id", "=", $value->id)->get();
             $repayment_count = 0;
             if($repayments->count() > 0){
                 foreach($repayments as $k => $v){
                     $repayment_count += $v->nominal;
                 }
             }
-            $total_price = $value->price*$value->qty;
-            $reminder = $total_price-$repayment_count;
+            $total_price = ($value->price*$value->qty);
+            $reminder = (int)$total_price-(int)$repayment_count;
             $no ++;
             $row = array();
             $row[] = $no;
@@ -171,7 +171,7 @@ class PreOrderController extends Controller
             $count_total_repayment += $repayment_count;
             $count_reminder += $reminder;
             if($reminder > 0){
-                $row[] = "<label class='badge badge-danger'>Belum Lunas</label>";
+                $row[] = "<label class='badge badge-danger'>Belum Lunas</label> ";
             }else{
                 $row[] = "<label class='badge badge-success'>Lunas</label>";
             }
