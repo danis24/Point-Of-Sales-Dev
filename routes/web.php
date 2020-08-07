@@ -33,14 +33,14 @@ Route::group(['middleware' => ['web', 'usercheck:1']], function(){
 	Route::resource('payments', 'PaymentController');
 
 
-	Route::get('stockin/data', 'StockController@listDataStockIn')->name('stockin.data');
+	Route::get('stockin/data/{begin}/{end}', 'StockController@listDataStockIn')->name('stockin.data');
 	Route::get('stockin', 'StockController@indexStockIn')->name('stockin.index');
 	Route::post('stockin', 'StockController@store')->name('stockin.store');
 	Route::get('stockin/{id}/edit', 'StockController@edit')->name('stockin.edit');
 	Route::patch('stockin/{id}', 'StockController@update')->name('stockin.update');
 	Route::delete('stockin/{id}', 'StockController@destroy')->name('stockin.destroy');
 
-	Route::get('stockout/data', 'StockController@listDataStockOut')->name('stockout.data');
+	Route::get('stockout/data/{begin}/{end}', 'StockController@listDataStockOut')->name('stockout.data');
 	Route::get('stockout', 'StockController@indexStockOut')->name('stockout.index');
 	Route::post('stockout', 'StockController@store')->name('stockout.store');
 	Route::get('stockout/{id}/edit', 'StockController@edit')->name('stockout.edit');
@@ -97,7 +97,8 @@ Route::group(['middleware' => ['web', 'usercheck:1']], function(){
 	Route::get('purchase_details/loadform/{discount}/{total}', 'PurchaseDetailsController@loadForm');
 	Route::resource('purchase_details', 'PurchaseDetailsController');
 
-	Route::get('selling/data', 'SellingController@listData')->name('selling.data');
+	Route::get('selling/data/{begin}/{end}/{division}', 'SellingController@listData')->name('selling.data');
+	Route::get('selling/pdf/{begin}/{end}/{division}', 'SellingController@sellingExportDetail')->name('selling.pdf');
 	Route::get('selling/{id}/show', 'SellingController@show');
 	Route::resource('selling', 'SellingController');
 
@@ -157,14 +158,14 @@ Route::group(['middleware' => 'web'], function(){
 	Route::post('product/print_stock', 'ProductController@printProductStock');
 	Route::resource('product', 'ProductController');
 
-	Route::get('stockin/data', 'StockController@listDataStockIn')->name('stockin.data');
+	Route::get('stockin/data/{begin}/{end}', 'StockController@listDataStockIn')->name('stockin.data');
 	Route::get('stockin', 'StockController@indexStockIn')->name('stockin.index');
 	Route::post('stockin', 'StockController@store')->name('stockin.store');
 	Route::get('stockin/{id}/edit', 'StockController@edit')->name('stockin.edit');
 	Route::patch('stockin/{id}', 'StockController@update')->name('stockin.update');
 	Route::delete('stockin/{id}', 'StockController@destroy')->name('stockin.destroy');
 
-	Route::get('stockout/data', 'StockController@listDataStockOut')->name('stockout.data');
+	Route::get('stockout/data/{begin}/{end}', 'StockController@listDataStockOut')->name('stockout.data');
 	Route::get('stockout', 'StockController@indexStockOut')->name('stockout.index');
 	Route::post('stockout', 'StockController@store')->name('stockout.store');
 	Route::get('stockout/{id}/edit', 'StockController@edit')->name('stockout.edit');

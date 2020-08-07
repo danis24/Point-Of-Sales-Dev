@@ -5,6 +5,53 @@ Penjualan
 @endsection
 
 @section('content')
+<div class="card">
+	<div class="card-header">
+		Filter
+	</div>
+
+	<div class="card-body">
+		<form action="" method="POST">
+			@csrf
+			<div class="row">
+				<div class="col-4">
+					<div class="form-group">
+						<label for="">Dari Tanggal</label>
+						<input type="date" class="form-control" name="begin" id="begin" required value="{{ $begin }}">
+					</div>
+				</div>
+				<div class="col-4">
+					<div class="form-group">
+						<label for="">Sampai Tanggal</label>
+						<input type="date" class="form-control" name="end" id="end" required value="{{ $end }}">
+					</div>
+				</div>
+				<div class="col-4">
+					<div class="form-group">
+						<label for="">Divisi</label>
+						<select name="division" id="division" class="form-control">
+							@if($divisions->count() > 0)
+							@foreach($divisions as $key => $value)
+							@if($division == $value->id)
+							<option value="{{$value->id}}" selected>{{$value->name}}</option>
+							@else
+							<option value="{{$value->id}}">{{$value->name}}</option>
+							@endif
+							@endforeach
+							@endif
+						</select>
+					</div>
+				</div>
+				<div class="col-12">
+					<div class="form-group">
+						<label for=""></label>
+						<button type="button" id="button_filter" class="btn btn-success">FILTER</button>
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
 <!-- Body Copy -->
 <div class="card">
     <div class="card-body">
@@ -17,6 +64,7 @@ Penjualan
                     Baru</a>
                 <a href="{{ route('transaction.index') }}" class="dropdown-item has-icon"><i
                         class="fas fa-hand-holding-usd"></i>Transaksi Aktif</a>
+                <a href="#" id="selling_pdf_export" class="dropdown-item has-icon"><i class="fas fa-file-pdf"></i>Export PDF</a>
             </div>
         </div>
         <div class="card-body">
@@ -55,10 +103,10 @@ Penjualan
             "language": {
                 "url": "{{asset('tables_indo.json')}}",
             },
-            "processing": true,
-            "serverside": true,
+			"processing": true,
+			"serverside": true,
             "ajax": {
-                "url": "{{route('selling.data')}}",
+                "url": "{{url('selling/data')}}/{{$begin}}/{{$end}}/{{$division}}",
                 "type": "GET"
             }
         });
@@ -70,6 +118,22 @@ Penjualan
         });
 
         $('.table-supplier').DataTable();
+    });
+
+    $('#button_filter').click(function () {
+        let begin = $("#begin").val();
+        let end = $("#end").val();
+        let division = $("#division").val();
+        table.ajax.url("{{url('selling/data')}}/"+begin+"/"+end+"/"+division);
+        table.ajax.reload();
+    });
+
+    $("#selling_pdf_export").click(function () {
+        let begin = $("#begin").val();
+        let end = $("#end").val();
+        let division = $("#division").val();
+        let url = "{{url('selling/pdf')}}/"+begin+"/"+end+"/"+division;
+        window.open(url, "_blank");
     });
 
     function addForm() {

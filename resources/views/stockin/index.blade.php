@@ -5,6 +5,39 @@
 @endsection
 
 @section('content')
+<div class="row">
+	<div class="col-12">
+		<div class="card">
+			<div class="card-header">
+				Filter Laporan
+			</div>
+			<!-- /.card-header -->
+			<div class="card-body">
+				
+				<div class="row">
+					<div class="col-6">
+						<div class="form-group">
+							<label for="">Dari Tanggal</label>
+							<input type="date" class="form-control" name="begin" id="begin" required value="{{ $begin }}">
+						</div>
+					</div>
+					<div class="col-6">
+						<div class="form-group">
+							<label for="">Sampai Tanggal</label>
+							<input type="date" class="form-control" name="end" id="end" required value="{{ $end }}">
+						</div>
+					</div>
+					<div class="col-4">
+						<button type="button" id="button_filter" class="btn btn-success">FILTER</button>
+					</div>
+				</div>
+				
+			</div>
+			<!-- /.card-body -->
+		</div>
+		<!-- /.card -->
+	</div>
+</div>
 <!-- Body Copy -->
 <div class="card">
   <div class="card-body">
@@ -44,12 +77,23 @@
 			"language": {
 				"url" : "{{asset('tables_indo.json')}}",
 			},
-			"processing" : true,
+			"bSort": false,
+			"bPaginate": false,
+			"processing": true,
+			"serverside": true,
 			"ajax" : {
-				"url"  : "{{route('stockin.data')}}",
+				"url"  : "{{url('stockin/data')}}/{{$begin}}/{{$end}}",
 				"type" : "GET"
 			}
 		});
+		
+		$('#button_filter').click(function () {
+			let begin = $("#begin").val();
+			let end = $("#end").val();
+			table.ajax.url("{{url('stockin/data')}}/"+begin+"/"+end);
+			table.ajax.reload();
+		});
+
 		$('#modal-form form').validator().on('submit', function(e){
 			if(!e.isDefaultPrevented()){
 				var id = $('#id').val();

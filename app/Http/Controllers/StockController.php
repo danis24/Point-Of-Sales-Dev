@@ -19,19 +19,23 @@ class StockController extends Controller
 
     public function indexStockIn()
     {
+        $begin = date('Y-m-d', mktime(0, 0, 0, date('m'), 1, date('Y')));
+		$end = date('Y-m-d');
         $products = $this->product->get();
-        return view('stockin.index', compact('products'));
+        return view('stockin.index', compact('products', 'begin', 'end'));
     }
 
     public function indexStockOut()
     {
+        $begin = date('Y-m-d', mktime(0, 0, 0, date('m'), 1, date('Y')));
+		$end = date('Y-m-d');
         $products = $this->product->get();
-        return view('stockout.index', compact('products'));
+        return view('stockout.index', compact('products', 'begin', 'end'));
     }
 
-    public function listDataStockIn()
+    public function listDataStockIn($begin, $end)
     {
-        $stocks = $this->model->where('type', 'in')->orderBy('id', 'asc')->get();
+        $stocks = $this->model->whereBetween('created_at', [$begin . " 00:00:00", $end . " 23:59:59"])->where('type', 'in')->orderBy('id', 'asc')->get();
         $no = 0;
         $data = array();
         foreach ($stocks as $key => $value) {
@@ -58,9 +62,9 @@ class StockController extends Controller
         return response()->json($output);
     }
 
-    public function listDataStockOut()
+    public function listDataStockOut($begin, $end)
     {
-        $stocks = $this->model->where('type', 'out')->orderBy('id', 'asc')->get();
+        $stocks = $this->model->whereBetween('created_at', [$begin . " 00:00:00", $end . " 23:59:59"])->where('type', 'out')->orderBy('id', 'asc')->get();
         $no = 0;
         $data = array();
         foreach ($stocks as $key => $value) {
