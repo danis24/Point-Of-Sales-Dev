@@ -58,7 +58,7 @@ class SellingController extends Controller
             $count_price += $value->total_price;
             }
         }
-        $sellingDetailGroup = SellingDetails::whereBetween('selling_details.created_at', [$begin . " 00:00:00", $end . " 23:59:59"])->join('selling', 'selling.selling_id', '=', 'selling_details.selling_id')->join('product', 'product.product_code', '=', 'selling_details.product_code')->where('selling.division_id', $division)->get();
+        $sellingDetailGroup = SellingDetails::whereBetween('selling.created_at', [$begin . " 00:00:00", $end . " 23:59:59"])->join('selling', 'selling.selling_id', '=', 'selling_details.selling_id')->join('product', 'product.product_code', '=', 'selling_details.product_code')->where('selling.division_id', $division)->get();
         $product_group = [];
         if($sellingDetailGroup->count() > 0){
             foreach($sellingDetailGroup as $key => $value){
