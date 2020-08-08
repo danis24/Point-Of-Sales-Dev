@@ -161,9 +161,11 @@ class ProductController extends Controller
         	foreach ($request['id'] as $id) {
 				$product = Product::find($id);
 
+				//Selling
+				$selling_detail_count = SellingDetails::where("product_code", $product->product_code)->join("selling", "selling.selling_id", "=", "selling_details.selling_id")->join("divisions", "divisions.id", "=", "selling.division_id")->sum("total");
 				$SumStockIn = $this->stock->where("product_id", "=", $product->product_id)->where("type", "=", "in")->sum("stocks");
 				$SumStockOut = $this->stock->where("product_id", "=", $product->product_id)->where("type", "=", "out")->sum("stocks");
-				$stocks = ($product->product_stock+$SumStockIn)-$SumStockOut;
+				$stocks = ($product->product_stock+$SumStockIn)-($SumStockOut+$selling_detail_count);
 
 				$data[] = [
 					"product_code" => $product->product_code,
