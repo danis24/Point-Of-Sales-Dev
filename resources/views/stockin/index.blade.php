@@ -95,7 +95,8 @@
 		});
 
 		$("#product_id").select2({
-			width: '100%' // need to override the changed default
+			width: '100%',
+			dropdownParent: $("#modal-form")
 		});
 
 		$('#modal-form form').validator().on('submit', function(e){
