@@ -45,7 +45,6 @@
             	</tr>
             </tbody>
           </table>
-
     	</form>
     </div>
   </div>
@@ -54,6 +53,7 @@
 
 @section('script')
 @include('product.form')
+@include('product.printlabel')
 <script type="text/javascript">
 	var table, save_method;
 	$(function(){
@@ -107,6 +107,23 @@
 			}
 		});
 	});
+
+	function printLabelModal(id){
+		$.ajax({
+			url			: "{{url('product')}}/"+id,
+			type 		: "GET",
+			dataType	: "JSON",
+			success		: function(data){
+				$("#product_code_label").val(data.product_code);
+				$("#product_name_label").val(data.product_name);
+				$("#product_id_label").val(data.product_id);
+			}
+		});
+		$('#product_code_label').attr('readonly', true);
+		$('#product_name_label').attr('readonly', true);
+		$("#modal-label").modal("show");
+	}
+
 	function addForm(){
 		save_method = "add";
 		$.ajax({

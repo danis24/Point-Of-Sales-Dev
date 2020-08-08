@@ -157,6 +157,7 @@ Route::group(['middleware' => 'web'], function(){
 	Route::get('product-code', 'ProductController@uniqueCode')->name('product.code');
 	Route::post('product/delete', 'ProductController@deleteSelected');
 	Route::post('product/print', 'ProductController@printBarcode');
+	Route::post('product/single-print', 'ProductController@printSingleBarcode')->name('product.singleprint');
 	Route::post('product/print_stock', 'ProductController@printProductStock');
 	Route::resource('product', 'ProductController');
 

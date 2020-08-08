@@ -8,10 +8,10 @@
 	</style>
 </head>
 <body>
-	<table width="100%" style="border-spacing: 2mm;">
+	<table style="border-spacing: 2mm;">
 		<tr>
 			@foreach($data_product as $data)
-			<td align="center" style="border: 1px solid #ccc">
+			<td align="center" style="padding-left: 14.5px; padding-right: 14.5px">
 				<span style="font-size: 5">{{$data['product_name']}}</span><br>
 				<img src="data:image/png;base64,{{$data['barcode']}}" alt="barcode"/><br>
 				<span style="font-size: 5">{{$data['product_code']}}</span>

@@ -71,11 +71,18 @@ class ProductController extends Controller
                       <div class="dropdown-menu">
                         <a onclick="editForm('.$list->product_id.')" class="dropdown-item has-icon"><i class="fas fa-edit"></i>Edit Data</a>
                         <a onclick="deleteData('.$list->product_id.')" class="dropdown-item has-icon"><i class="fas fa-trash"></i>Hapus Data</a>
+                        <a onclick="printLabelModal('.$list->product_id.')" class="dropdown-item has-icon"><i class="fas fa-print"></i>Print Label</a>
                       </div>';
             $data[] = $row;
     	}
     	return Datatables::of($data)->escapeColumns([])->make(true);
-    }
+	}
+	
+	public function show($id)
+	{
+		$product = Product::where("product_id", $id)->first();
+		return response()->json($product);
+	}
 
     public function store(Request $request){
     	$total = Product::where('product_code', '=', $request['product_code'])->count();
@@ -144,6 +151,24 @@ class ProductController extends Controller
         	}
 		}
     	$no = 1;
+    	$pdf = PDF::loadView('product.barcode', compact('data_product', 'no'));
+    	$pdf->setPaper([0,0,470.551,575.433], 'landscape');
+    	return $pdf->stream();
+	}
+
+	public function printSingleBarcode(Request $request){
+		$product = Product::find($request->product_id_label);
+		$product_code = $product->product_code;
+		$data_product = [];
+		for($i = 0; $i < $request->count_label; $i++){
+			$data_product[] = [
+				"product_name" => $product->product_name,
+				"selling_price" => $product->selling_price,
+				"product_code" => $product_code,
+				"barcode" => DNS1D::getBarcodePNG($product_code, "C128", 1,30)
+			];
+		}
+		$no = 1;
     	$pdf = PDF::loadView('product.barcode', compact('data_product', 'no'));
     	$pdf->setPaper([0,0,470.551,575.433], 'landscape');
     	return $pdf->stream();
