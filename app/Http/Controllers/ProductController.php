@@ -11,6 +11,8 @@ use PDF;
 use DNS2D;
 use DNS1D;
 use App\Stock;
+use App\SellingDetails;
+use App\Selling;
 
 class ProductController extends Controller
 {
@@ -41,9 +43,13 @@ class ProductController extends Controller
     	$no = 0;
     	$data = array();
     	foreach ($product as $list) {
+			//Selling
+			$selling_detail_count = SellingDetails::where("product_code", $list->product_code)->join("selling", "selling.selling_id", "=", "selling_details.selling_id")->join("divisions", "divisions.id", "=", "selling.division_id")->sum("total");
+			//Stocks
 			$SumStockIn = $this->stock->where("product_id", "=", $list->product_id)->where("type", "=", "in")->sum("stocks");
 			$SumStockOut = $this->stock->where("product_id", "=", $list->product_id)->where("type", "=", "out")->sum("stocks");
-			$stocks = ($list->product_stock+$SumStockIn)-$SumStockOut;
+			$stocks = ($list->product_stock+$SumStockIn)-($SumStockOut+$selling_detail_count);
+
     		$no ++;
             $row = array();
             $row[] = "

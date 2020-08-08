@@ -15,6 +15,7 @@ use Mike42\Escpos\PrintConnectors\FilePrintConnector;
 use Mike42\Escpos\Printer;
 use App\Division;
 use App\Payment;
+use App\Stock;
 
 class SellingDetailsController extends Controller
 {
@@ -41,7 +42,6 @@ class SellingDetailsController extends Controller
 
    public function listData($id)
    {
-
      $detail = SellingDetails::select('product.product_code', 'product.product_name', 'selling_details.selling_price', 'selling_details.selling_details_id', 'selling_details.total', 'selling_details.sub_total', 'selling_details.discount as discount')->where('selling_id', $id)->join('product', 'product.product_code', '=', 'selling_details.product_code')->get();
      $no = 0;
      $data = array();
@@ -71,9 +71,9 @@ class SellingDetailsController extends Controller
    public function store(Request $request)
    {
       $product = Product::where('product_code', '=', $request['product_code'])->join("units", 'units.id', '=', 'product.unit_id')->first();
-      if($product->product_stock == 0){
+      if($this->stockProduct($request['product_code']) == 0){
         return response()->json([
-          "message" => "Stock Product Habis !! Sisa Produk yang tersedia adalah ".$product->product_stock." ".$product->name
+          "message" => "Stock Product Habis !! Sisa Produk yang tersedia adalah ".$this->stockProduct($request['product_code'])." ".$product->name
         ]);
       }
       $detail = new SellingDetails;
@@ -82,9 +82,9 @@ class SellingDetailsController extends Controller
         $selling_price = $product->selling_price - ($product->discount/100 * $product->selling_price);
         $checkProduct->total = $checkProduct->total+1;
         $checkProduct->sub_total = ($checkProduct->total)*$selling_price;
-        if($product->product_stock < $checkProduct->total){
+        if($this->stockProduct($request['product_code']) < $checkProduct->total){
           return response()->json([
-            "message" => "Stock Product Habis !! Sisa Produk yang tersedia adalah ".$product->product_stock." ".$product->name
+            "message" => "Stock Product Habis !! Sisa Produk yang tersedia adalah ".$this->stockProduct($request['product_code'])." ".$product->name
           ]);
         }
         $checkProduct->update();
@@ -99,15 +99,25 @@ class SellingDetailsController extends Controller
       }
    }
 
+   protected function stockProduct($product_code)
+   {	
+	   	$product = Product::where("product_code", $product_code)->first();
+		$SumStockIn = Stock::where("product_id", "=", $product->product_id)->where("type", "=", "in")->sum("stocks");
+		$SumStockOut = Stock::where("product_id", "=", $product->product_id)->where("type", "=", "out")->sum("stocks");
+		
+		$stocks = ($product->product_stock+$SumStockIn)-$SumStockOut;
+		return $stocks;
+   }
+
    public function update(Request $request, $id)
    {
       $input_name = "total_".$id;
       $discount = "discount_".$id;
       $detail = SellingDetails::find($id);
       $product = Product::where('product_code', '=', $detail->product_code)->join("units", 'units.id', '=', 'product.unit_id')->first();
-      if($product->product_stock < $request[$input_name]){
+      if($this->stockProduct($detail->product_code) < $request[$input_name]){
         return response()->json([
-          "message" => "Stock Product Habis !! Sisa Produk yang tersedia adalah ".$product->product_stock." ".$product->name
+          "message" => "Stock Product Habis !! Sisa Produk yang tersedia adalah ".$this->stockProduct($detail->product_code)." ".$product->name
         ]);
       }
       $total_price = $request[$input_name] * ($detail->selling_price-$request[$discount]);
@@ -151,18 +161,18 @@ class SellingDetailsController extends Controller
       $selling->received = $request['received'];
       $selling->division_id = $request['division_id'];
       $selling->payment_id = $request['payment_id'];
-      if(\Auth::user()->level = 1){
+      if(\Auth::user()->level == 1){
         $selling->created_at = $request['date'];
       }
       $selling->update();
 
-      $detail = SellingDetails::where('selling_id', '=', $request['selling_id'])->get();
-      foreach($detail as $data){
-        $product = Product::where('product_code', '=', $data->product_code)->first();
-        $product->product_stock -= $data->total;
-        $product->update();
-      }
-      if(\Auth::user()->level = 1){
+      // $detail = SellingDetails::where('selling_id', '=', $request['selling_id'])->get();
+      // foreach($detail as $data){
+      //   $product = Product::where('product_code', '=', $data->product_code)->first();
+      //   $product->product_stock -= $data->total;
+      //   $product->update();
+      // }
+      if(\Auth::user()->level == 1){
         return Redirect::route('selling.index');
       }
       return Redirect::route('transaction.print');

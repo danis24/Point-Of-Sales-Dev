@@ -1,5 +1,5 @@
 <div class="modal fade" id="modal-form" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <form id="form_validation" method="POST" data-toggle="validator">
                 {{csrf_field()}} {{method_field('POST')}}
@@ -15,7 +15,7 @@
                             <select name="product_id" id="product_id" class="form-control">
                                 @if($products->count() > 0)
                                 @foreach($products as $key => $value)
-                                <option value="{{ $value->product_id }}">{{ $value->product_name }}</option>
+                                <option value="{{ $value->product_id }}">{{$value->product_code}} - {{ $value->product_name }}</option>
                                 @endforeach
                                 @endif
                             </select>

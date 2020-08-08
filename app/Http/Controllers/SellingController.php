@@ -161,13 +161,7 @@ class SellingController extends Controller
     public function destroy($id){
         $selling = Selling::find($id);
         $selling->delete();
-
-        $detail = SellingDetails::where('selling_id', '=', $id)->get();
-        foreach ($detail as $data) {
-        	$product = Product::where('product_code', '=', $data->product_code)->first();
-        	$product->stock += $data->total;
-        	$data->update();
-        	$data->delete();
-        }
+        $selling_details = SellingDetails::find($id);
+        $selling_details->delete();
     }
 }

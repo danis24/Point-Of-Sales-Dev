@@ -94,6 +94,10 @@
 			table.ajax.reload();
 		});
 
+		$("#product_id").select2({
+			width: '100%' // need to override the changed default
+		});
+
 		$('#modal-form form').validator().on('submit', function(e){
 			if(!e.isDefaultPrevented()){
 				var id = $('#id').val();

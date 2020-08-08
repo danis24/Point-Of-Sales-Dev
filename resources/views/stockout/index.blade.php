@@ -87,6 +87,10 @@
 			}
 		});
 
+		$("#product_id").select2({
+			width: '100%' // need to override the changed default
+		});
+
 		$('#button_filter').click(function () {
 			let begin = $("#begin").val();
 			let end = $("#end").val();
