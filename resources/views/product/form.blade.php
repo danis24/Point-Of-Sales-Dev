@@ -1,5 +1,5 @@
 <div class="modal" id="modal-form" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <form id="form_validation" method="POST" data-toggle="validator">
                 {{csrf_field()}} {{method_field('POST')}}
@@ -50,7 +50,7 @@
                     <div class="form-group form-float">
                         <div class="form-line">
                             <label class="form-label">Diskon</label>
-                            <input type="text" class="form-control" id="discount" name="discount" autofocus required>
+                            <input type="text" class="form-control" id="discount" name="discount" value="0" autofocus required>
                         </div>
                     </div>
                     <div class="form-group form-float">
@@ -63,8 +63,8 @@
                     <div class="form-group form-float">
                         <div class="form-line">
                             <label class="form-label">Stok Awal</label>
-                            <input type="text" class="form-control" id="product_stock" name="product_stock" autofocus
-                                required>
+                            <input type="text" class="form-control" id="product_stock" value="0" name="product_stock" autofocus
+                                required readonly>
                         </div>
                     </div>
                     <div class="form-group form-float">

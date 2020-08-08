@@ -109,11 +109,19 @@
 	});
 	function addForm(){
 		save_method = "add";
+		$.ajax({
+			url			: "{{route('product.code')}}",
+			type 		: "GET",
+			dataType	: "JSON",
+			success		: function(data){
+				$('#product_code').val(data.product_code);
+			}
+		});
 		$('input[name=_method]').val('POST');
 		$('#modal-form').modal('show');
 		$('#modal-form form')[0].reset();
 		$('.modal-title').text('Tambah Produk');
-		$('#product_code').attr('readonly', false);
+		$('#product_code').attr('readonly', true);
 	}
 	function editForm(id){
 		save_method = "edit";

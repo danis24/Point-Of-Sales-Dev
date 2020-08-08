@@ -99,15 +99,14 @@ Detail Penjualan
           <div class="form-group">
             <input type="text" class="form-control" id="pay_rp" readonly>
           </div>
-
-          <div class="section-title">Diterima</div>
+          <!-- <div class="section-title">Diterima</div> -->
           <div class="form-group">
-            <input type="number" class="form-control" value="0" name="received" id="received">
+            <input type="hidden" class="form-control" value="0" name="received" id="received">
           </div>
 
-          <div class="section-title">Kembali</div>
+          <!-- <div class="section-title">Kembali</div> -->
           <div class="form-group">
-            <input type="text" class="form-control" id="remaining" value="0" readonly>
+            <input type="hidden" class="form-control" id="remaining" value="0" readonly>
           </div>
 
           <div class="section-title">Divisi</div>
@@ -203,10 +202,13 @@ Detail Penjualan
   var table;
   $(function () {
     $('.table-product').DataTable();
+    $('.tabel-member').DataTable();
     table = $('.table-selling').DataTable({
       "dom": 'Brt',
       "bSort": false,
+      "bPaginate": false,
       "processing": true,
+      "serverside": true,
       "ajax": {
         "url": "{{ route('transaction.data', $selling_id) }}",
         "type": "GET"
@@ -255,6 +257,9 @@ Detail Penjualan
         table.ajax.reload(function () {
           loadForm($('#discount').val());
         });
+        if(data.message != undefined){
+          alert(data.message);
+        }
       },
       error: function () {
         alert("Tidak dapat menyimpan data!");
@@ -286,6 +291,9 @@ Detail Penjualan
         table.ajax.reload(function () {
           loadForm($('#discount').val());
         });
+        if(data.message != undefined){
+          alert(data.message);
+        }
       },
       error: function () {
         alert("Tidak dapat menyimpan data!");
@@ -321,6 +329,7 @@ Detail Penjualan
 
   function loadForm(discount = 0, received = 0) {
     $('#total').val($('.total').text());
+    console.log($('.total').text());
     $('#total_item').val($('.total_item').text());
 
     $.ajax({

@@ -42,15 +42,14 @@ class SellingDetailsController extends Controller
    public function listData($id)
    {
 
-     $detail = SellingDetails::leftJoin('product', 'product.product_code', '=', 'selling_details.product_code')->where('selling_id', '=', $id)->select('product.product_code', 'product.product_name', 'selling_details.selling_price', 'selling_details.selling_details_id', 'selling_details.total', 'selling_details.sub_total', 'selling_details.discount as discount')->get();
+     $detail = SellingDetails::select('product.product_code', 'product.product_name', 'selling_details.selling_price', 'selling_details.selling_details_id', 'selling_details.total', 'selling_details.sub_total', 'selling_details.discount as discount')->where('selling_id', $id)->join('product', 'product.product_code', '=', 'selling_details.product_code')->get();
      $no = 0;
      $data = array();
      $total = 0;
      $total_item = 0;
-     foreach($detail as $list){
-       $no ++;
+     foreach($detail as $key => $list){
        $row = array();
-       $row[] = $no;
+       $row[] = $key+1;
        $row[] = $list->product_code;
        $row[] = $list->product_name;
        $row[] = "Rp. ".currency_format($list->selling_price);
@@ -64,16 +63,32 @@ class SellingDetailsController extends Controller
        $total += $list->sub_total;
        $total_item += $list->total;
      }
-     $data[] = array("<span class='d-none total'>$total</span><span class='d-none total_item'>$total_item</span>", "", "", "", "", "", "", "");
-
+     $data[] = array("", "", "", "", "<span class='d-none total_item'>$total_item</span>", "", "<span class='d-none total'>$total</span>", "");
      $output = array("data" => $data);
      return response()->json($output);
    }
 
    public function store(Request $request)
    {
-        $product = Product::where('product_code', '=', $request['product_code'])->first();
-        $detail = new SellingDetails;
+      $product = Product::where('product_code', '=', $request['product_code'])->join("units", 'units.id', '=', 'product.unit_id')->first();
+      if($product->product_stock == 0){
+        return response()->json([
+          "message" => "Stock Product Habis !! Sisa Produk yang tersedia adalah ".$product->product_stock." ".$product->name
+        ]);
+      }
+      $detail = new SellingDetails;
+      $checkProduct = $detail->where('selling_id', $request->selling_id)->where('product_code', $request->product_code)->first();
+      if($checkProduct != null){
+        $selling_price = $product->selling_price - ($product->discount/100 * $product->selling_price);
+        $checkProduct->total = $checkProduct->total+1;
+        $checkProduct->sub_total = ($checkProduct->total)*$selling_price;
+        if($product->product_stock < $checkProduct->total){
+          return response()->json([
+            "message" => "Stock Product Habis !! Sisa Produk yang tersedia adalah ".$product->product_stock." ".$product->name
+          ]);
+        }
+        $checkProduct->update();
+      }else{
         $detail->selling_id = $request['selling_id'];
         $detail->product_code = $request['product_code'];
         $detail->selling_price = $product->selling_price;
@@ -81,7 +96,7 @@ class SellingDetailsController extends Controller
         $detail->discount = $product->discount;
         $detail->sub_total = $product->selling_price - ($product->discount/100 * $product->selling_price);
         $detail->save();
-
+      }
    }
 
    public function update(Request $request, $id)
@@ -89,8 +104,13 @@ class SellingDetailsController extends Controller
       $input_name = "total_".$id;
       $discount = "discount_".$id;
       $detail = SellingDetails::find($id);
+      $product = Product::where('product_code', '=', $detail->product_code)->join("units", 'units.id', '=', 'product.unit_id')->first();
+      if($product->product_stock < $request[$input_name]){
+        return response()->json([
+          "message" => "Stock Product Habis !! Sisa Produk yang tersedia adalah ".$product->product_stock." ".$product->name
+        ]);
+      }
       $total_price = $request[$input_name] * ($detail->selling_price-$request[$discount]);
-
       $detail->total = $request[$input_name];
       $detail->discount = $request[$discount];
       $detail->sub_total = $total_price;

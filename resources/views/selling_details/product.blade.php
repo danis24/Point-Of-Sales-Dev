@@ -13,7 +13,7 @@
 		   <tr>
 		      <th>Kode Produk</th>
 		      <th>Nama Produk</th>
-		      <th>Harga Beli</th>
+		      <th>Harga</th>
 		      <th>Aksi</th>
 		   </tr>
 		</thead>
@@ -22,7 +22,7 @@
 			<tr>
 		      <th>{{ $data->product_code }}</th>
 		      <th>{{ $data->product_name }}</th>
-		      <th>Rp. {{ currency_format($data->purchase_price) }}</th>
+		      <th>Rp. {{ currency_format($data->selling_price) }}</th>
 		      <th><a onclick="selectItem({{ $data->product_code }})" class="btn btn-primary"><i class="fa fa-check-circle"></i> Pilih</a></th>
 		    </tr>
 			@endforeach

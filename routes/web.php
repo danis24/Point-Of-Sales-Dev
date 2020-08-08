@@ -49,6 +49,7 @@ Route::group(['middleware' => ['web', 'usercheck:1']], function(){
 
 
 	Route::get('product/data', 'ProductController@listData')->name('product.data');
+	Route::get('product-code', 'ProductController@uniqueCode')->name('product.code');
 	Route::post('product/delete', 'ProductController@deleteSelected');
 	Route::post('product/print', 'ProductController@printBarcode');
 	Route::post('product/print_stock', 'ProductController@printProductStock');
@@ -153,6 +154,7 @@ Route::group(['middleware' => 'web'], function(){
 	Route::resource('units', 'UnitController');
 
 	Route::get('product/data', 'ProductController@listData')->name('product.data');
+	Route::get('product-code', 'ProductController@uniqueCode')->name('product.code');
 	Route::post('product/delete', 'ProductController@deleteSelected');
 	Route::post('product/print', 'ProductController@printBarcode');
 	Route::post('product/print_stock', 'ProductController@printProductStock');

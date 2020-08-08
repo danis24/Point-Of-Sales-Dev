@@ -26,7 +26,15 @@ class ProductController extends Controller
 		$category = Category::all();
 		$units = Unit::all();
     	return view('product.index', compact('category', 'units'));
-    }
+	}
+	
+	public function uniqueCode()
+	{
+		$unique_product_code = Product::latest('created_at')->first()->product_code+1;
+		return response()->json([
+			"product_code" => $unique_product_code
+		]);
+	}
 
     public function listData(){
     	$product = Product::leftJoin('category', 'category.category_id', '=', 'product.category_id')->orderBy('product.product_id', 'desc')->get();
