@@ -3,7 +3,7 @@
 <head>
 	<title>Cetak Barcode</title>
 	<style>
-		@page { margin-top: 0mm; margin-bottom: 5mm; margin-left: 1mm; margin-right: 1mm}
+		@page { margin-top: 1mm; margin-bottom: 5mm; margin-left: 1mm; margin-right: 1mm}
 		body { margin: 0px; }
 	</style>
 </head>
@@ -11,7 +11,7 @@
 	<table style="border-spacing: 2mm;">
 		<tr>
 			@foreach($data_product as $data)
-			<td align="center" style="border: 1px solid #ccc; padding-left: 15px; padding-right: 15px">
+			<td align="center" style="border: 1px solid #ccc; padding-left: 12px; padding-right: 15px">
 				<span style="font-size: 4">{{$data['product_name']}}</span><br>
 				<img src="data:image/png;base64,{{$data['barcode']}}" alt="barcode"/><br>
 				<span style="font-size: 5">{{$data['product_code']}}</span>
