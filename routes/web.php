@@ -175,4 +175,7 @@ Route::group(['middleware' => 'web'], function(){
 	Route::patch('stockout/{id}', 'StockController@update')->name('stockout.update');
 	Route::delete('stockout/{id}', 'StockController@destroy')->name('stockout.destroy');
 
+	Route::get('label', 'LabelController@index')->name('label.index');
+	Route::post('label', 'LabelController@printBarcode')->name('label.print');
+
 });

@@ -176,6 +176,12 @@
                     <span>Stok Keluar</span>
                   </a>
                 </li>
+                <li>
+                  <a class="nav-link" href="{{route('label.index')}}">
+                    <i class="fas fa-print"></i>
+                    <span>Print Label</span>
+                  </a>
+                </li>
               </ul>
             </li>
             @endif
