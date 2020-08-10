@@ -3,12 +3,12 @@
 <head>
 	<title>Cetak Barcode</title>
 	<style>
-		@page { margin-top: 1mm; margin-bottom: 5mm; margin-left: -1mm; margin-right: 2mm}
+		@page { margin-top: 0mm; margin-bottom: 5mm; margin-left: -1mm; margin-right: 2mm}
 		body { margin: 0px; }
 	</style>
 </head>
 <body>
-	<table style="border-spacing: 3mm 2mm">
+	<table style="border-spacing: 3mm 3mm">
 		<tr>
 			@foreach($data_product as $data)
 			<td align="center" style="width: 36mm; height: 16mm">
