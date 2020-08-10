@@ -11,7 +11,7 @@
 	<table style="border-spacing: 3mm 4mm">
 		<tr>
 			@foreach($data_product as $data)
-			<td align="center" style="width: 36mm; height: 16mm; padding-left: 2mm">
+			<td align="center" style="width: 36mm; height: 16mm">
 				<span style="font-size: 4">{{$data['product_name']}}</span><br>
 				<img src="data:image/png;base64,{{$data['barcode']}}" alt="barcode"/><br>
 				<span style="font-size: 5">{{$data['product_code']}}</span>
