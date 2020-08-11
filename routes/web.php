@@ -61,6 +61,7 @@ Route::group(['middleware' => ['web', 'usercheck:1']], function(){
 	Route::get('preorders/data/{begin}/{end}/{division}', 'PreOrderController@listData')->name('preorders.data');
 	Route::get('preorders/report/{begin}/{end}/{division}', 'PreOrderController@report')->name('preorders.report');
 	Route::post('preoders/send', 'PreOrderController@sendWhatsApp')->name('preorders.send');
+	Route::post('preoders/broadcast', 'PreOrderController@broadcastWhatsapp')->name('preorders.broadcast');
 	Route::resource('preorders', 'PreOrderController');
 	Route::get('preorders/{id}/show', 'PreOrderController@show')->name('preorders.show');
 
@@ -128,6 +129,8 @@ Route::group(['middleware' => ['web', 'usercheck:1']], function(){
 	Route::resource('transaction', 'SellingDetailsController');
 
 });
+
+Route::get('preoders/invoice/{begin}/{end}/{member}', 'ReportController@preOrderInvoice')->name('preorders.invoice');
 
 Route::group(['middleware' => 'web'], function(){
 	Route::get('accounting-report', 'ReportController@reportAccounting')->name('accountingreports.index');

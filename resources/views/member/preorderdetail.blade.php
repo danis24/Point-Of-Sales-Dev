@@ -7,6 +7,7 @@
 						&times; </span> </button>
 			</div>
 			<div class="modal-body">
+				<button class="btn btn-success" id="wa_broadcast"><i class="fab fa-whatsapp"></i> Whatsapp Broadcast</button><br><br>
 				<div class="table-responsive">
 					<table class="table table-bordered table-detail">
 						<thead>

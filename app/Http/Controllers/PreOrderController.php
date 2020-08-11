@@ -273,6 +273,29 @@ class PreOrderController extends Controller
         return redirect($link);
     }
 
+    public function broadcastWhatsapp(Request $request)
+    {
+        $data = $this->preOrderDetail(0, $request->member_id);
+        $payment = $this->payment->where("id", $request->payment_id)->first();
+        $payment_type = "";
+        if($payment->bank_name == ""){
+            $payment_type = "CASH";
+        }else{
+            $payment_type = $payment->bank_name."%0a No Rek : ".$payment->account_number."%0a A/N ".$payment->account_name;
+        }
+        $link = "https://api.whatsapp.com/send?phone=".$data[0][4]."&text=".$this->whatsAppBroadcastText($request->member_id, $data, $payment_type);
+        return redirect($link);
+    }
+
+    protected function whatsAppBroadcastText($member_id, $data, $payment_type)
+    {
+        $begin = date('Y-m-d', mktime(0,0,0, date('m'), 1, date('Y')));
+        $end = date('Y-m-d');
+        $invoice_url = \URL::to('/')."/preoders/invoice/".$begin."/".$end."/".$member_id;
+        $text = "Halo Bpk/Ibu *".$data[0][3]."* %0a%0a Perkenalkan saya admin dari *ERSO PRIDATAMA* Divisi *".$data[0][2]."* menginformasikan perihal tagihan dengan rincian terlampir pada link berikut ini :%0a".$invoice_url."%0aTerimakasih atas perhatianya dan mohon untuk segera melakukan pembayaran ke rekening berikut ini : %0a".$payment_type."%0a%0aSegeralah konfirmasi jika sudah melakukan pembayaran%0a%0aSalam, %0a ERSO PRIDATAMA (DIVISI ".$data[0][2].")";
+        return $text;
+    }
+
     protected function whatsAppDebitText($data, $payment_type)
     {
         $price = "";

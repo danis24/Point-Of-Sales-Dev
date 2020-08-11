@@ -22,7 +22,7 @@ class ReportController extends Controller
 
 	public function __construct()
 	{
-		$this->middleware("auth");
+		$this->middleware("auth", ['except' => ['preOrderInvoice']]);
 	}
 
 	public function index()
@@ -95,6 +95,7 @@ class ReportController extends Controller
 		$total_price = 0;
 		$total_reminder = 0;
 		$no = 1;
+		$reminder_count = 0;
 		if($pre_orders->count() > 0){
 			foreach($pre_orders as $key => $value){
 				$repayments = Repayment::where("pre_order_id", $value->id)->get();
@@ -116,15 +117,17 @@ class ReportController extends Controller
 					$row[] = $value->qty;
 					$row[] = "Rp.".currency_format($value->price);
 					$row[] = "Rp.".currency_format($value->qty*$value->price);
+					$row[] = "Rp.".currency_format($reminder);
 					$row[] = "Rp.".currency_format(($value->qty*$value->price)-$reminder);
 					$debit_data[] = $row;
 					
 					$total_price += ($value->qty*$value->price);
 					$total_reminder += ($value->qty*$value->price)-$reminder;
+					$reminder_count += $reminder;
 				}
 			}
 		}
-		$debit_data[] = ["", "", "", "", "", "", "", "Rp.".currency_format($total_price), "Rp.".currency_format($total_reminder)];
+		$debit_data[] = ["", "", "", "", "", "", "", "Rp.".currency_format($total_price), "Rp.".currency_format($reminder_count), "Rp.".currency_format($total_reminder)];
 		return $debit_data;
 	}
 
@@ -273,6 +276,11 @@ class ReportController extends Controller
 		$result_array[] = ["", "", "", "", "", "<h5>" . currency_format($total_income) . "</h5>", "<h5>" . currency_format($total_spending) . "</h5>", "<h5>" . currency_format($total_income - $total_spending) . "</h5>"];
 		return $result_array;
 	}
+
+	public function preOrderInvoice($begin, $end, $member_id)
+    {
+        return PDF::loadHTML($this->resultHtmlInvoice($begin, $end, 0, $member_id))->setPaper('a4', 'landscape')->stream('download.pdf');
+    }
 
 	public function preOrderDetail($begin, $end, $division, $member)
 	{
@@ -567,10 +575,66 @@ class ReportController extends Controller
 			$output .= "<td align='center'>" . $value[6] . "</td>";
 			$output .= "<td align='center'>" . $value[7] . "</td>";
 			$output .= "<td align='center'>" . $value[8] . "</td>";
+			$output .= "<td align='center'>" . $value[9] . "</td>";
 			$output .= "</tr>";
 		}
 
 		$output .= "</tbody></table>";
+		return $output;
+	}
+
+	public function resultHtmlInvoice($begin, $end, $division, $member)
+	{
+		$data = $this->reportDebitList($begin, $end, $division, $member);
+		$output = "<h1 align='center'>CV. ERSO PRIDATAMA</h1>";
+		$output .= "<hr>";
+		$output .= "<h2 align='center'>TAGIHAN PEMBAYARAN</h2>";
+		$output .= "<h3 align='center'>Periode " . indo_date($begin, false) . " s/d " . indo_date($end, false) . "</h3><br>";
+		$output .= "<p>Nama : ".$data[0][3]."</p>";
+		$output .= "<style>
+		 .vuln {
+			font-size: 12px;
+		   font-family: 'Trebuchet MS', Arial, Helvetica, sans-serif;
+		   border-collapse: collapse;
+		   width: 100%;
+		 }
+
+		 .vuln td, .vuln th {
+		   border: 1px solid #ddd;
+		   padding: 8px;
+		   word-wrap:break-word
+		 }
+
+		 .vuln tr:nth-child(even){background-color: #f2f2f2;}
+
+		 .vuln tr:hover {background-color: #ddd;}
+
+		 .vuln th {
+		   padding-top: 12px;
+		   padding-bottom: 12px;
+		   text-align: left;
+		   background-color: #131633;
+		   color: white;
+		 }
+		 table{
+		   table-layout: fixed;
+		   }
+		 </style>";
+		$output .= "<table class='vuln'><thead><tr><th width='4%'>No</th><th width='8%'>Tanggal</th><th width='15%'>Rincian</th><th width='6%'>Qty</th><th>Harga</th><th>Total Harga</th><th>Sudah Dibayar</th><th>Sisa</th></tr></thead><tbody>";
+		foreach ($data as $key => $value) {
+			$output .= "<tr><td>" . $value[0] . "</td>";
+			$output .= "<td>" . $value[1] . "</td>";
+			$output .= "<td>" . $value[4] . "</td>";
+			$output .= "<td align='center'>" . $value[5] . "</td>";
+			$output .= "<td align='right'>" . $value[6] . "</td>";
+			$output .= "<td align='right'>" . $value[7] . "</td>";
+			$output .= "<td align='right'>" . $value[8] . "</td>";
+			$output .= "<td align='right'>" . $value[9] . "</td>";
+			$output .= "</tr>";
+		}
+
+		$output .= "</tbody></table>";
+		$output .= "<p>Total Yang Harus Dibayar Sebesar : <b>".$value[9]."</b></p><br><br><br><br>Salam, <br> ERSO PRIDATAMA DIVISI (".$data[0][2].")";
 		return $output;
 	}
 }

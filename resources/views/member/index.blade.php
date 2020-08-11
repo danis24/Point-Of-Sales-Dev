@@ -48,6 +48,7 @@
 @include('member.form')
 @include('member.preorderdetail')
 @include('member.whatsapp')
+@include('member.broadcast')
 <script type="text/javascript">
 	var table, save_method, table1;
 	$(function(){
@@ -114,6 +115,10 @@
 				return false;
 			}
 		});
+
+		$("#wa_broadcast").click(function () {
+			$('#modal-broadcast').modal('show');
+		});
 	});
 
 	function sendWhatsapp(id){
@@ -124,6 +129,7 @@
 	function showDetail(id){
 		$('#modal-detail').modal('show');
 		table1.ajax.url("preorders/"+id+"/show");
+		$('#member_id').val(id);
 		table1.ajax.reload();
 	}
 
