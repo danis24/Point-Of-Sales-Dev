@@ -8,7 +8,7 @@
 	</style>
 </head>
 <body>
-	<table style="border-spacing: 20px 17px">
+	<table style="border-spacing: 18px 17px">
 		<tr>
 			@foreach($data_product as $data)
 			<td align="center" style="width: 35mm; height: 15mm">
